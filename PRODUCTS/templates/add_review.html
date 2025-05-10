@@ -1,0 +1,224 @@
+{% extends 'home.html' %}
+{% load static %}
+
+{% block content %}
+<div class="review-container">
+    <div class="review-content">
+        <h2>{% if is_edit %}Edit Review{% else %}Add Review{% endif %}</h2>
+        
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="product-info">
+            <img src="{{ order_item.item.image.url }}" alt="{{ order_item.item.name }}">
+            <div class="product-details">
+                <h3>{{ order_item.item.name }}</h3>
+                <p>Ordered on: {{ order_item.order_id.created_at|date:"F j, Y" }}</p>
+            </div>
+        </div>
+
+        <form method="post" class="review-form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="{{ form.rating.id_for_label }}">Rating</label>
+                {{ form.rating }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.comment.id_for_label }}">Your Review</label>
+                {{ form.comment }}
+            </div>
+            <button type="submit" class="submit-btn">
+                {% if is_edit %}Update Review{% else %}Submit Review{% endif %}
+            </button>
+        </form>
+    </div>
+</div>
+
+<style>
+.review-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    margin-top: 100px;
+}
+
+.review-content {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 2rem;
+}
+
+.messages {
+    margin-bottom: 1.5rem;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    animation: slideIn 0.3s ease-out;
+}
+
+.alert-success {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+}
+
+.alert-error {
+    background: #ffebee;
+    color: #c62828;
+    border: 1px solid #ffcdd2;
+}
+
+.alert-info {
+    background: #e3f2fd;
+    color: #1565c0;
+    border: 1px solid #bbdefb;
+}
+
+.alert .close {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0;
+    margin-left: 1rem;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.review-content h2 {
+    color: #333;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.product-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.product-info img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.product-details h3 {
+    margin: 0;
+    color: #333;
+}
+
+.product-details p {
+    margin: 0.5rem 0 0;
+    color: #666;
+}
+
+.review-form {
+    margin-top: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #333;
+    font-weight: 500;
+}
+
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.submit-btn {
+    background: #3399cc;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    width: 100%;
+    transition: background 0.3s ease;
+}
+
+.submit-btn:hover {
+    background: #2878a9;
+}
+
+@media (max-width: 768px) {
+    .review-container {
+        margin: 1rem auto;
+    }
+    
+    .review-content {
+        padding: 1rem;
+    }
+    
+    .product-info {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .product-info img {
+        width: 150px;
+        height: 150px;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-hide success messages after 5 seconds
+    const successMessages = document.querySelectorAll('.alert-success');
+    successMessages.forEach(message => {
+        setTimeout(() => {
+            message.style.opacity = '0';
+            message.style.transform = 'translateY(-20px)';
+            setTimeout(() => message.remove(), 300);
+        }, 5000);
+    });
+});
+</script>
+{% endblock %}

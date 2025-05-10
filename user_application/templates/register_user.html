@@ -1,0 +1,518 @@
+{% extends 'home.html' %}
+{% load static %}
+
+
+{% block title %}Register to ShopIQ{% endblock %}
+
+{% block content %}
+<!-- Main Container -->
+<div class="container-fluid">
+    <div class="row">
+        <!-- Left Section -->
+        <div class="col-md-6 left-section">
+            <div class="left-section-content">
+                <h1>Discover <span class="shopiq-text">Shopiq</span> – Your Ultimate Shopping Hub</h1>
+                <p>Explore a world of products, exclusive deals, and seamless shopping, all in one place.</p>
+                <div class="rocket-container">
+                    <img src="{% static 'images/rocket.gif' %}" alt="Rocket Illustration" class="rocket-image">
+                    <div class="cloud"></div>
+                </div>
+            </div>
+        </div>
+        <!-- Right Section -->
+        <div class="col-md-6 right-section">
+            <h2>Register to <span class="shopiq-text">SHOPIQ</span></h2>
+            <div class="form-container">
+                <form id="loginForm" method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <div class="input-grou">
+                            <span class="input-group-text"><i class="bi bi-person"></i></span>
+                            <input type="text" class="form-control" id="username" placeholder="Username" name='username' required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="input-grou">
+                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                            <input type="email" class="form-control" id="email" placeholder="Email" name='email' required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="input-grou">
+                            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                            <input type="password" class="form-control" id="password" placeholder="Password" name='password' required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="input-grou">
+                            <span class="input-group-text"><i class="bi bi-person"></i></span>
+                            <input type="text" class="form-control" id="first_name" placeholder="First Name" name='first_name' required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="input-grou">
+                            <span class="input-group-text"><i class="bi bi-person"></i></span>
+                            <input type="text" class="form-control" id="last_name" placeholder="Last Name" name='last_name' required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-login" id="registerBtn">Register</button>
+                    <div class="error-message" id="errorMessage">Please fill in all fields.</div>
+                </form>
+                <p class="signup-text">Already have an account? <a href="{% url 'login' %}" class="signup-link">Login</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loader Container -->
+<div class="loader-container" id="loader">
+    <div class="spinner-box">
+        <div class="configure-border-1">  
+            <div class="configure-core"></div>
+        </div>  
+        <div class="configure-border-2">
+            <div class="configure-core"></div>
+        </div> 
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+    <style>
+        /* ------------------- Layout Styles ------------------- */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+        overflow-x: hidden;
+    }
+    
+    /* Override navbar styles to match home.html */
+    .navbar {
+        padding: 8px 0;
+        height: 60px;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 1000;
+    }
+
+    .container {
+        max-width: 1300px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 15px;
+        height: 100%;
+    }
+
+    /* Main content container */
+        .container-fluid {
+        padding-top: 60px;
+        margin-top: 0;
+        }
+    
+        .left-section {
+            background-color: #fcfcfc;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 50px;
+        min-height: calc(100vh - 60px);
+        }
+    
+        .right-section {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 50px;
+        min-height: calc(100vh - 60px);
+            background-image:url("{% static 'images/bg.gif' %}");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 800px 780px;
+        }
+    
+        .left-section-content,
+        .form-container {
+            animation: zoomIn 1s ease-in-out forwards;
+        }
+
+        /* ------------------- Typography Styles ------------------- */
+        .left-section h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #2c3e50;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+            text-align: center;
+            letter-spacing: 1.5px;
+        }
+        .left-section h1 .shopiq-text {
+            font-family: 'Raleway', sans-serif;
+            background: linear-gradient(90deg, #E91E63, #F06292);
+            -webkit-background-clip: text;
+        background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 1px 1px 3px rgba(233, 30, 99, 0.3);
+        }
+        .left-section p {
+            font-family: 'Inter', sans-serif;
+            color: #7f8c8d;
+            font-size: 1.1rem;
+            text-align: center;
+            line-height: 1.8;
+            margin-bottom: 40px;
+            max-width: 400px;
+        }
+        .right-section h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #fff;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            text-align: center;
+            letter-spacing: 1.5px;
+        }
+        .right-section h2 .shopiq-text {
+            font-family: 'Raleway', sans-serif;
+            background: linear-gradient(90deg, #E91E63, #F06292);
+            -webkit-background-clip: text;
+        background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 1px 1px 3px rgba(233, 30, 99, 0.3);
+        }
+        .form-check-label {
+            font-family: 'Inter', sans-serif;
+            color: #fff;
+            font-size: 0.95rem;
+            margin-left: 5px;
+        }
+   
+        .signup-link {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            color: #E91E63;
+            font-size: 0.95rem;
+            text-decoration: none;
+            text-transform: uppercase;
+            margin-top: 15px;
+            display: inline-block;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+        .signup-link:hover {
+            color: #fff;
+            transform: scale(1.05);
+        }
+        .error-message {
+            font-family: 'Inter', sans-serif;
+            color: #E91E63;
+            font-size: 0.9rem;
+            text-align: center;
+            margin-top: 8px;
+            display: none;
+        }
+        .signup-text {
+            font-family: 'Inter', sans-serif;
+            color: #fff;
+            font-size: 0.95rem;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        /* ------------------- Form Styles ------------------- */
+        .form-container {
+            width: 100%;
+            max-width: 350px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+    .input-grou {
+            margin-bottom: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+    .input-grou:hover {
+            transform: scale(1.02);
+            box-shadow: 0 2px 10px rgba(233, 30, 99, 0.2);
+        }
+        .form-control {
+            font-family: 'Inter', sans-serif;
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 0 8px 8px 0;
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            color: #2c3e50;
+            height: 38px;
+            line-height: 1.5;
+            transition: border 0.3s ease, box-shadow 0.3s ease;
+        }
+        .form-control::placeholder {
+            color: #7f8c8d;
+            opacity: 0.7;
+        }
+        .form-control:focus {
+            box-shadow: 0 0 8px rgba(233, 30, 99, 0.3);
+            border: 1px solid #E91E63;
+            outline: none;
+        }
+        .form-control.invalid {
+            border: 1px solid #E91E63;
+        }
+        .input-group-text {
+            background-color: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+            border-right: none;
+            border-radius: 8px 0 0 8px;
+            padding: 0 10px;
+            color: #E91E63;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.3s ease;
+        }
+        .input-group-text i {
+            font-size: 1rem;
+        }
+        .input-group-text:hover {
+            color: #fff;
+        }
+        .form-check-input {
+            width: 16px;
+            height: 16px;
+            margin-top: 2px;
+        }
+        .btn-login {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            background: linear-gradient(90deg, #E91E63, #F06292);
+            color: #fff;
+            padding: 10px;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            border: none;
+            width: 100%;
+            text-transform: uppercase;
+            transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 2px 10px rgba(233, 30, 99, 0.3);
+        }
+        .btn-login:hover {
+            background: linear-gradient(90deg, #D81B60, #EC407A);
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(233, 30, 99, 0.5);
+        }
+
+        /* ------------------- Decorative Elements ------------------- */
+        .rocket-image {
+            width: 250px;
+            height: 250px;
+            position: relative;
+            z-index: 1;
+            animation: float 3s ease-in-out infinite;
+        }
+        .rocket-image:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+        .cloud {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 180px;
+            height: 60px;
+            background: #fff;
+            border-radius: 100px;
+            z-index: 1;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .cloud::before,
+        .cloud::after {
+            content: '';
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+        }
+        .cloud::before {
+            width: 80px;
+            height: 80px;
+            top: -40px;
+            left: 20px;
+        }
+        .cloud::after {
+            width: 60px;
+            height: 60px;
+            top: -30px;
+            right: 20px;
+        }
+        .left-section-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+        .rocket-container {
+            position: relative;
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    /* Remove wave-like Background Shapes */
+        .wave-left,
+        .wave-right {
+        display: none;
+        }
+        .wave-left::before,
+        .wave-left::after,
+        .wave-right::before,
+        .wave-right::after {
+        display: none;
+        }
+
+        /* ------------------- Animation Styles ------------------- */
+        @keyframes zoomIn {
+            0% {
+                transform: scale(0.95);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        /* New Loader Styles */
+        .loader-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .spinner-box {
+            position: relative;
+            width: 50px;
+            height: 50px;
+        }
+
+        .configure-border-1 {
+            width: 50px;
+            height: 50px;
+            padding: 3px;
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #E91E63; /* Changed to match theme */
+            animation: configure-clockwise 3s ease-in-out 0s infinite alternate;
+        }
+
+        .configure-border-2 {
+            width: 50px;
+            height: 50px;
+            padding: 3px;
+            left: -50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #F06292; /* Changed to match theme */
+            transform: rotate(45deg);
+            animation: configure-xclockwise 3s ease-in-out 0s infinite alternate;
+        }
+
+        .configure-core {
+            width: 100%;
+            height: 100%;
+            background-color: #1d2630;
+        }
+
+        @keyframes configure-clockwise {
+            0% { transform: rotate(0); }
+            25% { transform: rotate(90deg); }
+            50% { transform: rotate(180deg); }
+            75% { transform: rotate(270deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes configure-xclockwise {
+            0% { transform: rotate(45deg); }
+            25% { transform: rotate(-45deg); }
+            50% { transform: rotate(-135deg); }
+            75% { transform: rotate(-225deg); }
+            100% { transform: rotate(-315deg); }
+        }
+
+    /* Ensure header matches home.html exactly */
+    header {
+        height: 60px;
+        padding: 0;
+        }
+    </style>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            // Show loader when form is submitted
+            document.getElementById('loader').style.display = 'flex';
+            
+            // Disable the register button to prevent multiple clicks
+            document.getElementById('registerBtn').disabled = true;
+            
+            // Optional: Add form validation here if needed
+            const inputs = this.querySelectorAll('input');
+            let isValid = true;
+            
+            inputs.forEach(input => {
+                if (!input.value) {
+                    isValid = false;
+                    input.classList.add('invalid');
+                } else {
+                    input.classList.remove('invalid');
+                }
+            });
+            
+            if (!isValid) {
+                e.preventDefault();
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('registerBtn').disabled = false;
+            }
+        });
+    </script>
+{% endblock %}

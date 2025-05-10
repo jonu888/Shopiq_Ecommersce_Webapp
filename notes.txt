@@ -1,0 +1,45 @@
+
+
+
+-payment integration
+
+step1---->products added to oreder table when click place order button in brouser
+
+
+step2 ----> server-----(key_id,key_secret) keep on server
+
+
+step 3----> server sent an request for creating an order in razor pay using this  details (products,username,total amount)
+
+
+step 4----> then razor pay send an respons and a order id for conirmation of creating an order to server 
+
+step 5----> server sends to link to brouser to pay the amount
+
+
+step 6----> when pay now button redirect to razor pay for pay the amount
+
+step 7---->after completeion of payment send an confirmation(sign,orderid,payment id) to server
+
+step 8----> after confirm the payment in server you can edit fields in table like set payment status = True ex...
+
+
+
+-DRF REST 
+
+
+Api-Application program interface-Used to make a communnication btn frondend and backend appplication,using JSON format(easy to implement in diffrent languages)
+
+DRF-used to build a Api in btn Applications,for handle request from multiple devices like android,ios,web
+
+
+
+
+
+
+python-django--------> Api-----> ios,android,web
+                      Json
+
+
+
+

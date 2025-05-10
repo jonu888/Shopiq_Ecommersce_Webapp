@@ -1,0 +1,379 @@
+{% extends 'home.html' %}
+{% load static %}
+
+{% block content %}
+<div class="orders-container">
+    <div class="orders-header">
+        <div class="back-button">
+            <a href="{% url 'profile' %}" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Back to Profile
+            </a>
+        </div>
+        <h1>My Orders</h1>
+    </div>
+
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if order_items %}
+    <div class="orders-list">
+        {% for item in order_items %}
+        <div class="order-item">
+            <div class="order-header">
+                <div class="order-info">
+                    <h3>Order #{{ item.order_id.id }}</h3>
+                    <p>Placed on {{ item.order_id.created_at|date:"F j, Y" }}</p>
+                    <p>Status: {{ item.status|title }}</p>
+                </div>
+                <div class="order-status">
+                    <span class="status-badge {{ item.status }}">{{ item.status|title }}</span>
+                </div>
+            </div>
+
+            <div class="product-details">
+                {% if item.item.image %}
+                <img src="{{ item.item.image.url }}" alt="{{ item.item.name }}">
+                {% else %}
+                <div class="no-image">No Image</div>
+                {% endif %}
+                <div class="product-info">
+                    <h4>{{ item.item.name }}</h4>
+                    <p>Quantity: {{ item.quantity }}</p>
+                    <p>Price: ₹{{ item.item.price }}</p>
+                    
+                </div>
+            </div>
+
+            {% if item.status == 'completed' %}
+            <div class="order-actions">
+                {% if item.id in reviewed_order_ids %}
+                <a href="{% url 'add_review' item.id %}" class="review-btn edit">
+                    <i class="fas fa-edit"></i> Edit Review
+                </a>
+                {% else %}
+                <a href="{% url 'add_review' item.id %}" class="review-btn add">
+                    <i class="fas fa-star"></i> Add Review
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="no-orders">
+        <i class="fas fa-shopping-bag"></i>
+        <p>You haven't placed any orders yet.</p>
+        <a href="{% url 'Home' %}" class="shop-btn">Start Shopping</a>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.orders-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    margin-top: 100px;
+}
+
+.messages {
+    margin-bottom: 1.5rem;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    animation: slideIn 0.3s ease-out;
+}
+
+.alert-success {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+}
+
+.alert-error {
+    background: #ffebee;
+    color: #c62828;
+    border: 1px solid #ffcdd2;
+}
+
+.alert-info {
+    background: #e3f2fd;
+    color: #1565c0;
+    border: 1px solid #bbdefb;
+}
+
+.alert .close {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0;
+    margin-left: 1rem;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.orders-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.back-button {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.back-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: #f8f9fa;
+    color: #333;
+    text-decoration: none;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+    background: #e9ecef;
+}
+
+.back-btn i {
+    font-size: 0.9rem;
+}
+
+.orders-header h1 {
+    color: #333;
+    font-size: 2rem;
+}
+
+.orders-list {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.order-item {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+}
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.order-info h3 {
+    margin: 0;
+    color: #333;
+}
+
+.order-info p {
+    margin: 0.5rem 0 0;
+    color: #666;
+}
+
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.status-badge.completed {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.status-badge.pending {
+    background: #fff3e0;
+    color: #e65100;
+}
+
+.status-badge.canceled {
+    background: #ffebee;
+    color: #c62828;
+}
+
+.product-details {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.product-details img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.no-image {
+    width: 100px;
+    height: 100px;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    color: #999;
+}
+
+.product-info h4 {
+    margin: 0;
+    color: #333;
+}
+
+.product-info p {
+    margin: 0.5rem 0 0;
+    color: #666;
+}
+
+.order-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+.review-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.review-btn.add {
+    background: #3399cc;
+    color: white;
+}
+
+.review-btn.edit {
+    background: #f8f9fa;
+    color: #333;
+    border: 1px solid #ddd;
+}
+
+.review-btn:hover {
+    opacity: 0.9;
+}
+
+.no-orders {
+    text-align: center;
+    padding: 3rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.no-orders i {
+    font-size: 3rem;
+    color: #ddd;
+    margin-bottom: 1rem;
+}
+
+.no-orders p {
+    color: #666;
+    margin-bottom: 1.5rem;
+}
+
+.shop-btn {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    background: #3399cc;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background 0.3s ease;
+}
+
+.shop-btn:hover {
+    background: #2878a9;
+}
+
+@media (max-width: 768px) {
+    .orders-container {
+        margin: 1rem auto;
+    }
+    
+    .back-button {
+        position: static;
+        transform: none;
+        margin-bottom: 1rem;
+    }
+    
+    .back-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .order-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .product-details {
+        flex-direction: column;
+    }
+    
+    .product-details img,
+    .no-image {
+        width: 100%;
+        height: 200px;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-hide success messages after 5 seconds
+    const successMessages = document.querySelectorAll('.alert-success');
+    successMessages.forEach(message => {
+        setTimeout(() => {
+            message.style.opacity = '0';
+            message.style.transform = 'translateY(-20px)';
+            setTimeout(() => message.remove(), 120);
+        }, 2000);
+    });
+});
+</script>
+{% endblock %}

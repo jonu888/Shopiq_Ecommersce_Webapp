@@ -1,0 +1,611 @@
+{% extends 'home.html' %}
+{% load static %}
+
+{% block title %}{{ data.name }} - ShopIQ{% endblock %}
+
+{% block extra_css %}
+<style>
+    html, body {
+        overflow-x: hidden;
+        width: 100%;
+        position: relative;
+    }
+
+    .page-wrapper {
+        width: 100%;
+        overflow-x: hidden;
+        position: relative;
+    }
+
+    .main-content {
+        padding-top: 60px;
+        min-height: calc(100vh - 60px);
+        background-color: #f1f3f6;
+        width: 100%;
+        overflow-x: hidden;
+        position: relative;
+    }
+
+    .breadcrumb-section {
+        padding: 12px 16px;
+        background: #fff;
+        box-shadow: 0 1px 1px 0 rgba(0,0,0,.16);
+        width: 100%;
+        overflow-x: hidden;
+        position: relative;
+    }
+
+    .breadcrumb-list {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .breadcrumb-item {
+        color: #878787;
+        font-size: 12px;
+    }
+
+    .breadcrumb-item a {
+        color: #878787;
+        text-decoration: none;
+    }
+
+    .breadcrumb-item + .breadcrumb-item:before {
+        content: ">";
+        margin: 0 8px;
+        color: #878787;
+    }
+
+    .product-section {
+        padding: 16px;
+        margin-top: 8px;
+        width: 100%;
+        overflow-x: hidden;
+        position: relative;
+    }
+
+    .product-container {
+        display: flex;
+        background: #fff;
+        border-radius: 2px;
+        box-shadow: 0 2px 4px 0 rgba(0,0,0,.08);
+        width: 100%;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .product-left {
+        width: 40%;
+        padding: 24px;
+        border-right: 1px solid #f0f0f0;
+        position: relative;
+        height: fit-content;
+    }
+
+    .product-right {
+        width: 60%;
+        padding: 24px 40px;
+        position: relative;
+    }
+
+    .image-container {
+        position: sticky;
+        top: 80px;
+        padding: 0;
+        width: 100%;
+        background: #fff;
+    }
+
+    .product-image {
+        width: 100%;
+        max-width: 350px;
+        height: auto;
+        margin: 0 auto;
+        display: block;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 16px;
+        padding: 16px 0;
+        background: #fff;
+        margin-top: 16px;
+    }
+
+    .buy-now-form, .add-to-cart-form {
+        flex: 1;
+    }
+
+    .buy-now, .add-to-cart {
+        width: 100%;
+        padding: 18px 8px;
+        border: none;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .buy-now {
+        background: #fb641b;
+        color: #fff;
+    }
+
+    .add-to-cart {
+        background: #ff9f00;
+        color: #fff;
+    }
+
+    .buy-now img, .add-to-cart img {
+        width: 20px;
+        height: 20px;
+        filter: brightness(0) invert(1);
+    }
+
+    .buy-now:disabled, .add-to-cart:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+
+    .product-title {
+        font-size: 18px;
+        line-height: 1.4;
+        color: #212121;
+        margin-bottom: 8px;
+    }
+
+    .ratings-section {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+
+    .rating-box {
+        background: #388e3c;
+        color: #fff;
+        padding: 2px 4px 2px 6px;
+        border-radius: 3px;
+        font-size: 14px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 2px;
+    }
+
+    .rating-star {
+        font-size: 12px;
+        margin-left: 2px;
+    }
+
+    .rating-count {
+        color: #878787;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .assured-img {
+        height: 21px;
+        margin-left: 8px;
+    }
+
+    .price-section {
+        margin: 16px 0;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .current-price {
+        font-size: 28px;
+        font-weight: 500;
+        color: #212121;
+    }
+
+    .original-price {
+        text-decoration: line-through;
+        font-size: 16px;
+        color: #878787;
+    }
+
+    .discount {
+        color: #388e3c;
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    .extra-off {
+        color: #388e3c;
+        font-size: 14px;
+        font-weight: 500;
+        width: 100%;
+        margin-top: 8px;
+    }
+
+    .offers-section {
+        margin: 24px 0;
+        border-top: 1px solid #f0f0f0;
+        padding-top: 24px;
+    }
+
+    .section-title {
+        font-size: 16px;
+        font-weight: 500;
+        margin-bottom: 16px;
+    }
+
+    .offer-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+    .offer-tag {
+        color: #388e3c;
+    }
+
+    .offer-text {
+        font-size: 14px;
+        color: #212121;
+    }
+
+    .offer-terms {
+        color: #2874f0;
+        cursor: pointer;
+        margin-left: 8px;
+    }
+
+    .delivery-section {
+        margin: 24px 0;
+        border-top: 1px solid #f0f0f0;
+        padding-top: 24px;
+    }
+
+    .pincode-check {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .pincode-input {
+        width: 250px;
+        padding: 8px 16px;
+        border: 1px solid #e0e0e0;
+        border-radius: 2px;
+        font-size: 14px;
+        outline: none;
+    }
+
+    .pincode-input:focus {
+        border-color: #2874f0;
+    }
+
+    .check-button {
+        color: #2874f0;
+        font-weight: 500;
+        cursor: pointer;
+        border: none;
+        background: none;
+        padding: 8px 0;
+    }
+
+    .highlights-section {
+        margin: 24px 0;
+        border-top: 1px solid #f0f0f0;
+        padding-top: 24px;
+    }
+
+    .highlights-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .highlights-list li {
+        color: #212121;
+        font-size: 14px;
+        margin-bottom: 8px;
+        position: relative;
+        padding-left: 20px;
+        line-height: 1.4;
+    }
+
+    .highlights-list li:before {
+        content: "•";
+        position: absolute;
+        left: 0;
+        color: #c2c2c2;
+    }
+
+    .wishlist-button {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        background: none;
+        border: none;
+        padding: 8px;
+        cursor: pointer;
+        z-index: 10;
+    }
+
+    .wishlist-icon {
+        color: #c2c2c2;
+        font-size: 24px;
+        transition: all 0.3s ease;
+    }
+
+    .wishlist-icon.active {
+        color: #ff4343;
+    }
+
+    .notification {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        padding: 12px 24px;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        z-index: 1000;
+        animation: slideIn 0.3s ease-out;
+        font-size: 14px;
+    }
+
+    .notification.success {
+        background: rgba(56, 142, 60, 0.9);
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .product-container {
+            flex-direction: column;
+        }
+
+        .product-left, .product-right {
+            width: 100%;
+            padding: 16px;
+            border-right: none;
+        }
+
+        .image-container {
+            position: relative;
+            top: 0;
+            padding: 0;
+        }
+
+        .action-buttons {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 8px;
+            background: #fff;
+            box-shadow: 0 -1px 5px rgba(0,0,0,.2);
+            z-index: 1000;
+            margin: 0;
+        }
+
+        .btn-cart, .btn-buy {
+            padding: 14px 8px;
+            font-size: 14px;
+        }
+
+        .product-title {
+            font-size: 16px;
+        }
+
+        .pincode-input {
+            width: 100%;
+            overflow-x: hidden;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Add CSRF token at the top of content -->
+{% csrf_token %}
+
+<div class="page-wrapper">
+    <div class="main-content">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb-section">
+            <ol class="breadcrumb-list">
+                <li class="breadcrumb-item"><a href="{% url 'Home' %}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'productlist' %}?category={{ data.category_id }}">{{ data.category }}</a></li>
+                <li class="breadcrumb-item">{{ data.name }}</li>
+            </ol>
+        </div>
+
+        <div class="product-section">
+            <div class="product-container">
+                <!-- Left Section - Product Images -->
+                <div class="product-left">
+                    <div class="image-container">
+                        {% if user.is_authenticated %}
+                        <button class="wishlist-button" onclick="toggleWishlist({{ data.id }})">
+                            <i class="fas fa-heart wishlist-icon {% if in_wishlist %}active{% endif %}"></i>
+                        </button>
+                        {% endif %}
+                        <img src="{{ data.image.url }}" alt="{{ data.name }}" class="product-image">
+                        <div class="action-buttons">
+                            {% if data.stock > 0 %}
+                                {% if user.is_authenticated %}
+                                    {% if in_cart %}
+                                        <a href="{% url 'cartlist' %}" class="buy-now" style="text-decoration: none; color: white;">GO TO CART</a>
+                                    {% else %}
+                                        <a href="{% url 'add_cart' pk=data.id %}" class="buy-now" style="text-decoration: none; color: white;">ADD TO CART</a>
+                                    {% endif %}
+                                    <a href="{% url 'orderone' pk=data.id %}" class="buy-now" style="text-decoration: none; color: white;">BUY NOW</a>
+                                {% else %}
+                                    <a href="{% url 'login' %}" class="buy-now" style="text-decoration: none; color: white;">LOGIN TO ADD TO CART</a>
+                                    <a href="{% url 'login' %}" class="buy-now" style="text-decoration: none; color: white;">LOGIN TO BUY</a>
+                                {% endif %}
+                            {% else %}
+                                <button class="btn-cart" disabled>OUT OF STOCK</button>
+                                <button class="btn-buy" disabled>OUT OF STOCK</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Section - Product Info -->
+                <div class="product-right">
+                    <h1 class="product-title">{{ data.name }}</h1>
+                    
+                    <div class="ratings-section">
+                        <div class="rating-box">
+                            {{ data.rating|default:"4.6" }} <span class="rating-star">★</span>
+                        </div>
+                        <span class="rating-count">{{ data.review_count|default:"7,112" }} Ratings & {{ data.review_count|default:"339" }} Reviews</span>
+                        
+                    </div>
+
+                    <div class="price-section">
+                        <span class="current-price">₹{{ data.price }}</span>
+                        <span class="original-price">₹{{ original_price|floatformat:0 }}</span>
+                        <span class="discount">{{ discount_percentage }}% off</span>
+                        <div class="extra-off">Extra ₹100 off</div>
+                    </div>
+
+                    <div class="offers-section">
+                        <h3 class="section-title">Available offers</h3>
+                        <div class="offer-item">
+                            <i class="fas fa-tag offer-tag"></i>
+                            <div class="offer-text">
+                                Bank Offer 5% Unlimited Cashback on Shopiq Bank Credit Card
+                                <span class="offer-terms">T&C</span>
+                            </div>
+                        </div>
+                        <div class="offer-item">
+                            <i class="fas fa-tag offer-tag"></i>
+                            <div class="offer-text">
+                                Special Price Get extra ₹100 off (price inclusive of cashback/coupon)
+                                <span class="offer-terms">T&C</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="delivery-section">
+                        <div class="pincode-check">
+                            <input type="text" class="pincode-input" placeholder="Enter delivery pincode">
+                            <button class="check-button">Check</button>
+                        </div>
+                    </div>
+
+                    <div class="highlights-section">
+                        <h3 class="section-title">Highlights</h3>
+                        <ul class="highlights-list">
+                            {% if data.description %}
+                            <li>{{ data.description }}</li>
+                            {% endif %}
+                            
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="notification" style="display: none;" class="notification"></div>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script>
+    // Pincode check functionality
+    document.querySelector('.check-button').addEventListener('click', function() {
+        const pincode = document.querySelector('.pincode-input').value;
+        if(pincode) {
+            alert('Delivery available for ' + pincode);
+        }
+    });
+
+    // Add form submission handling
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const button = this.querySelector('button[type="submit"]');
+            button.disabled = true;
+            if (button.classList.contains('buy-now')) {
+                button.innerHTML = '<img src="{% static "images/flash.svg" %}" alt="Flash"> Processing...';
+            } else {
+                button.innerHTML = '<img src="{% static "images/cart.svg" %}" alt="Cart"> Adding...';
+            }
+        });
+    });
+
+    function toggleWishlist(productId) {
+        {% if user.is_authenticated %}
+            const wishlistIcon = document.querySelector('.wishlist-icon');
+            const isInWishlist = wishlistIcon.classList.contains('active');
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            
+            fetch(`/add-to-wishlist/${productId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    wishlistIcon.classList.toggle('active');
+                    showNotification(
+                        isInWishlist ? 'Removed from your Wishlist' : 'Added to your Wishlist',
+                        true
+                    );
+                } else if (data.error === 'already_exists') {
+                    showNotification('Item is already in your wishlist', false);
+                } else {
+                    showNotification('Something went wrong. Please try again.', false);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Something went wrong. Please try again.', false);
+            });
+        {% else %}
+            window.location.href = "{% url 'login' %}";
+        {% endif %}
+    }
+
+    function showNotification(message, isSuccess = true) {
+        const notification = document.getElementById('notification');
+        notification.textContent = message;
+        notification.className = `notification ${isSuccess ? 'success' : ''}`;
+        notification.style.display = 'flex';
+        
+        setTimeout(() => {
+            notification.style.display = 'none';
+        }, 3000);
+    }
+</script>
+{% endblock %}

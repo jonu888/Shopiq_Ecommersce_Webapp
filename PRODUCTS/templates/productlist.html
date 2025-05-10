@@ -1,0 +1,638 @@
+{% extends 'home.html' %}
+{% load static %}
+
+{% block title %}Product List - ShopIQ{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f8f9fa;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+        width: 100%;
+    }
+
+    .main-content {
+        padding-top: 60px;
+        min-height: calc(100vh - 60px);
+        background-color: #f1f3f6;
+        width: 100%;
+        overflow-x: hidden;
+        box-sizing: border-box;
+    }
+
+    .container {
+        max-width: 90%;
+        padding: 0 15px;
+        margin: 0 auto;
+        box-sizing: border-box;
+    }
+
+    .row {
+        margin-left: -15px;
+        margin-right: -15px;
+        display: flex;
+        flex-wrap: wrap;
+        box-sizing: border-box;
+    }
+
+    .col-md-3, .col-md-9 {
+        padding: 0 15px;
+        box-sizing: border-box;
+    }
+
+    .breadcrumb {
+        margin: 15px 0;
+        font-size: 14px;
+    }
+
+    .breadcrumb a {
+        color: #666;
+        text-decoration: none;
+    }
+
+    .search-results {
+        margin-bottom: 20px;
+        color: #333;
+        font-size: 14px;
+    }
+
+    .sort-options {
+        padding: 16px 24px;
+        border-bottom: 1px solid #f0f0f0;
+        display: flex;
+        gap: 24px;
+    }
+
+    .sort-options a {
+        color: #212121;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        padding-bottom: 16px;
+        margin-bottom: -16px;
+    }
+
+    .sort-options a.active {
+        color: #2874f0;
+        border-bottom: 2px solid #2874f0;
+    }
+
+    .product-car {
+        display: flex;
+        padding: 24px;
+        border-bottom: 1px solid #f0f0f0;
+        position: relative;
+        background: #fff;
+    }
+
+    .product-car:last-child {
+        border-bottom: none;
+    }
+
+    .product-image {
+        width: 200px;
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        flex-shrink: 0;
+    }
+
+    .product-image img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    .product-details {
+        flex: 1;
+        padding: 0 24px;
+        min-width: 0;
+    }
+
+    .product-title {
+        font-size: 18px;
+        color: #212121;
+        margin-bottom: 8px;
+        text-decoration: none;
+        display: block;
+        font-weight: 400;
+    }
+
+    .product-title:hover {
+        color: #2874f0;
+    }
+
+    .rating-container {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+    .rating {
+        background-color: #388e3c;
+        color: #fff;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-size: 12px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .rating::after {
+        content: '★';
+        margin-left: 2px;
+    }
+
+    .review-count {
+        color: #878787;
+        font-size: 14px;
+    }
+
+    .specs-list {
+        list-style: none;
+        padding: 0;
+        margin: 12px 0;
+    }
+
+    .specs-list li {
+        color: #212121;
+        font-size: 14px;
+        margin-bottom: 4px;
+        position: relative;
+        padding-left: 15px;
+    }
+
+    .specs-list li::before {
+        content: '•';
+        position: absolute;
+        left: 0;
+        color: #c2c2c2;
+    }
+
+    .price-container {
+        margin-top: 16px;
+    }
+
+    .current-price {
+        font-size: 24px;
+        font-weight: 500;
+        color: #212121;
+    }
+
+    .original-price {
+        color: #878787;
+        text-decoration: line-through;
+        font-size: 16px;
+    }
+
+    .discount {
+        color: #26a541;
+        font-size: 16px;
+    }
+
+    .assured-badge {
+        height: 20px;
+    }
+
+    .delivery-info {
+        color: #212121;
+        font-size: 14px;
+        margin-top: 8px;
+    }
+
+    .bank-offer {
+        color: #26a541;
+        font-size: 14px;
+        margin-top: 4px;
+    }
+
+    .compare-checkbox {
+        margin-top: 15px;
+    }
+
+    .compare-checkbox label {
+        color: #212121;
+        font-size: 14px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .no-products {
+        padding: 40px;
+        text-align: center;
+    }
+
+    .no-products p {
+        color: #212121;
+        font-size: 16px;
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            padding: 0 10px;
+        }
+        
+        .row {
+            margin-left: -10px;
+            margin-right: -10px;
+        }
+        
+        .col-md-3, .col-md-9 {
+            padding: 0 10px;
+        }
+
+        .product-car {
+            flex-direction: column;
+            padding: 16px;
+        }
+
+        .product-image {
+            width: 100%;
+            height: auto;
+            max-width: 200px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+
+        .product-details {
+            padding: 16px 0 0;
+        }
+
+        .product-title {
+            font-size: 16px;
+        }
+    }
+
+    .filter-section {
+        background: #fff;
+        padding: 15px;
+        border-radius: 2px;
+        box-shadow: 0 1px 2px 0 rgba(0,0,0,.1);
+        margin-bottom: 16px;
+        position: sticky;
+        top: 75px;
+    }
+
+    .filters-header {
+        font-size: 18px;
+        font-weight: 500;
+        padding: 15px;
+        margin: -15px -15px 15px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .filter-group {
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .filter-group:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .filter-group-title {
+        font-size: 13px;
+        font-weight: 500;
+        color: #212121;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .filter-option {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .filter-checkbox {
+        width: 16px;
+        height: 16px;
+        margin-right: 10px;
+        accent-color: #2874f0;
+    }
+
+    .filter-label {
+        font-size: 14px;
+        color: #212121;
+        cursor: pointer;
+    }
+
+    .price-range {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+    }
+
+    .price-input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #e0e0e0;
+        border-radius: 2px;
+        font-size: 14px;
+    }
+
+    .price-input:focus {
+        border-color: #2874f0;
+        outline: none;
+    }
+
+    .search-results-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .search-query {
+        font-size: 16px;
+        color: #212121;
+    }
+
+    .search-count {
+        color: #878787;
+        font-size: 14px;
+    }
+
+    .price-sort-options {
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .price-sort-option {
+        display: block;
+        padding: 8px 0;
+        color: #212121;
+        text-decoration: none;
+        font-size: 14px;
+        transition: color 0.2s;
+    }
+
+    .price-sort-option:hover,
+    .price-sort-option.active {
+        color: #2874f0;
+    }
+
+    .product-sectio {
+        background: #fff;
+        border-radius: 2px;
+        box-shadow: 0 1px 2px 0 rgba(0,0,0,.1);
+    }
+
+    .product-car:first-child {
+        border-top: none;
+    }
+
+    .bestseller-tag {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background-color: #26a541;
+        color: white;
+        padding: 2px 8px;
+        font-size: 12px;
+        border-radius: 3px;
+    }
+
+    /* Add these new breadcrumb styles */
+    .breadcrumb-container {
+        background-color: #fff;
+        padding: 8px 0;
+        border-bottom: 1px solid #eaeaea;
+    }
+
+    .breadcrumb {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        align-items: center;
+    }
+
+    .breadcrumb-item {
+        font-size: 12px;
+        color: #878787;
+        display: flex;
+        align-items: center;
+    }
+
+    .breadcrumb-item a {
+        color: #878787;
+        text-decoration: none;
+    }
+
+    .breadcrumb-item a:hover {
+        color: #2874f0;
+    }
+
+    .breadcrumb-separator {
+        margin: 0 8px;
+        color: #878787;
+        font-size: 10px;
+    }
+
+    /* Update your existing main-content style */
+    .main-content {
+        padding-top: 56px; /* Adjusted to match the navbar height */
+        min-height: calc(100vh - 56px);
+        background-color: #f1f3f6;
+        width: 100%;
+        overflow-x: hidden;
+        box-sizing: border-box;
+    }
+
+    /* Update your existing filter-section style */
+    .filter-section {
+        margin-top: 16px; /* Add some space after breadcrumb */
+        /* ... rest of your filter-section styles ... */
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <!-- Add this breadcrumb section -->
+    <div class="breadcrumb-container">
+        <div class="container">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'Home' %}">Home</a>
+                </li>
+                {% if category %}
+                    <li class="breadcrumb-separator">›</li>
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'productlist' %}">{{ category.name }}</a>
+                    </li>
+                {% endif %}
+                {% if search_query %}
+                    <li class="breadcrumb-separator">›</li>
+                    <li class="breadcrumb-item">Search Results for "{{ search_query }}"</li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <!-- Filter Section -->
+            <div class="col-md-3">
+                <div class="filter-section">
+                    <div class="filters-header">Filters</div>
+                    
+                    <form method="GET" action="{% url 'productlist' %}" id="filterForm">
+                        {% if search_query %}
+                        <input type="hidden" name="search" value="{{ search_query }}">
+                        {% endif %}
+
+                        <!-- Price Sort Options -->
+                        <div class="price-sort-options">
+                            <h4 class="filter-group-title">SORT BY PRICE</h4>
+                            <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if selected_categories %}{% for cat in selected_categories %}category={{ cat }}&{% endfor %}{% endif %}sort=price_low" 
+                               class="price-sort-option {% if request.GET.sort == 'price_low' %}active{% endif %}">
+                               Price -- Low to High
+                            </a>
+                            <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if selected_categories %}{% for cat in selected_categories %}category={{ cat }}&{% endfor %}{% endif %}sort=price_high" 
+                               class="price-sort-option {% if request.GET.sort == 'price_high' %}active{% endif %}">
+                               Price -- High to Low
+                            </a>
+                        </div>
+                        
+                        <!-- Categories Filter -->
+                        <div class="filter-group">
+                            <div class="filter-group-title">CATEGORIES</div>
+                            <div class="filter-option">
+                                <input type="checkbox" 
+                                       id="category_all" 
+                                       name="category" 
+                                       value="all"
+                                       class="filter-checkbox"
+                                       {% if 'all' in selected_categories %}checked{% endif %}
+                                       onchange="handleAllCategories(this)">
+                                <label for="category_all" class="filter-label">ALL</label>
+                            </div>
+                            {% for category in categories %}
+                            <div class="filter-option">
+                                <input type="checkbox" 
+                                       id="category_{{ category.id }}" 
+                                       name="category" 
+                                       value="{{ category.id }}"
+                                       class="filter-checkbox category-checkbox"
+                                       {% if category.id|stringformat:"i" in selected_categories %}checked{% endif %}
+                                       onchange="document.getElementById('filterForm').submit()">
+                                <label for="category_{{ category.id }}" class="filter-label">{{ category.name }}</label>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Price Range Filter -->
+                        <div class="filter-group">
+                            <h4 class="filter-group-title">PRICE</h4>
+                            <div class="price-range">
+                                <input type="number" 
+                                       name="min_price" 
+                                       placeholder="Min" 
+                                       class="price-input" 
+                                       value="{{ request.GET.min_price }}" 
+                                       min="0">
+                                <input type="number" 
+                                       name="max_price" 
+                                       placeholder="Max" 
+                                       class="price-input"
+                                       value="{{ request.GET.max_price }}" 
+                                       min="0">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Product List Section -->
+            <div class="col-md-9">
+                <div class="product-sectio">
+                    <!-- Product List -->
+                    {% for product in data %}
+                    <a href="{% url 'productdetail' product.id %}" class="product-title" style="text-decoration: none;">
+                     <div class="product-car">
+                        
+                        <div class="product-image">
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        </div>
+                        <div class="product-details">
+                            <a href="{% url 'productdetail' product.id %}" class="product-title">
+                                {{ product.name }}
+                            </a>
+                            <div class="rating-container">
+                                <span class="rating">{{ product.rating|default:"4.6" }}</span>
+                                <span class="review-count">{{ product.review_count|default:"7,112" }} Ratings & {{ product.review_count|default:"339" }} Reviews</span>
+                            </div>
+                            <ul class="specs-list">
+                                {% if product.description %}
+                                <li>{{ product.description }}</li>
+                                {% endif %}
+                            </ul>
+                            <div class="price-container">
+                                <span class="current-price">₹{{ product.price }}</span>
+                            </div>
+                            <div class="delivery-info">Free delivery</div>
+                        </div>
+                     </div>
+                    </a>
+                    {% empty %}
+                    <div class="no-products">
+                        <p>No products found matching your criteria.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function handleAllCategories(checkbox) {
+        const categoryCheckboxes = document.querySelectorAll('.category-checkbox');
+        if (checkbox.checked) {
+            // Uncheck all other categories
+            categoryCheckboxes.forEach(cb => {
+                cb.checked = false;
+            });
+        }
+        document.getElementById('filterForm').submit();
+    }
+
+    // Add to Compare functionality
+    const compareCheckboxes = document.querySelectorAll('.compare-checkbox input');
+    compareCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const productId = this.id.split('_')[1];
+            // Implement compare functionality here
+        });
+    });
+
+    // Price range filter submission
+    const priceInputs = document.querySelectorAll('.price-input');
+    priceInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            document.getElementById('filterForm').submit();
+        });
+    });
+</script>
+{% endblock %}

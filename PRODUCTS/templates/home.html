@@ -1,0 +1,1001 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Home - ShopIQ{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts: Inter, Montserrat, and Raleway -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@500;700;800&family=Raleway:wght@700&display=swap" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(to bottom, #f5f5f5, #ffffff);
+            color: #333;
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        /* Navbar Styles */
+        header {
+            background: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            height: 60px;
+        }
+
+        .navbar {
+            padding: 8px 0;
+            height: 60px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+            height: 100%;
+            width: 100%;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            height: 100%;
+        }
+
+        .logo img {
+            height: 32px;
+            width: auto;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            margin-top: -2px;
+        }
+
+        .brand-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            line-height: 1.1;
+        }
+
+        .brand-tagline {
+            font-size: 8px;
+            color: #888;
+            font-weight: 400;
+            line-height: 1.1;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links li a {
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+            font-weight: 400;
+            transition: color 0.3s ease, transform 0.3s ease;
+            padding: 2px 0;
+        }
+
+        .nav-links li a:hover {
+            color:rgb(73, 180, 61);
+        }
+
+        .auth-buttons .btn {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            background-color:rgb(73, 180, 61);
+            padding: 4px 12px;
+            border-radius: 4px;
+            border: none;
+            line-height: 1.2;
+        }
+
+        .auth-buttons .btn:hover {
+            background-color: rgb(73, 180, 61);
+        }
+
+        /* Search Bar */
+        .search-bar {
+            flex: 1;
+            max-width: 600px;
+            margin: 0 20px;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: #74C0FC;
+            box-shadow: none;
+        }
+
+        .form-control:focus {
+            border-color: #74C0FC;
+            box-shadow: none;
+        }
+
+        .search-bar button {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #666;
+        }
+
+        /* Carousel Styles */
+        .carousel-inner img {
+            height: 300px;
+            object-fit: cover;
+
+        }
+
+        /* Card Styles */
+        .card {
+            border: none;
+            width: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            height: 100%;
+        }
+
+        .card img {
+            height: 180px;
+            width: 100%;
+            object-fit: contain;
+            padding: 10px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 500;
+            margin: 10px 0;
+            color: #007bff;
+        }
+
+        /* Category Section Styles */
+        .category-section {
+            padding: 16px;
+            background: #f1f3f6;
+        }
+
+        .category-container {
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 8px;
+            margin-bottom: 16px;
+        }
+
+        .category-title {
+            font-size: 22px;
+            font-weight: 500;
+            color: #212121;
+            margin: 0;
+        }
+
+        .view-all-link {
+            color: #2874f0;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .product-row {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding: 4px;
+            margin: -4px;  /* Compensate for padding */
+        }
+
+        .product-row::-webkit-scrollbar {
+            display: none;
+        }
+
+        .product-card {
+            flex: 0 0 auto;
+            width: 190px;
+            border: none;
+            background: white;
+            transition: transform 0.2s ease;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 190px;
+            object-fit: contain;
+            padding: 8px;
+            background: white;
+        }
+
+        .product-info {
+            padding: 8px;
+        }
+
+        .product-name {
+            font-size: 14px;
+            color: #212121;
+            margin: 0;
+            line-height: 1.2;
+            min-height: 34px;  /* Accommodate 2 lines of text */
+        }
+
+        .price-section {
+            margin-top: 8px;
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .current-price {
+            font-size: 16px;
+            font-weight: 500;
+            color: #212121;
+        }
+
+        .original-price {
+            font-size: 14px;
+            color: #878787;
+            text-decoration: line-through;
+        }
+
+        .discount-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background-color: #388e3c;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 2px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .category-section {
+                padding: 8px;
+            }
+
+            .category-container {
+                padding: 12px;
+                margin-bottom: 8px;
+            }
+
+            .product-card {
+                width: 150px;
+            }
+
+            .product-card img {
+                height: 150px;
+            }
+        }
+
+        /* Top Offers Section */
+        .top-offers {
+            margin-top: 30px;
+            margin-bottom: 40px;
+        }
+
+        .top-offers .row {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            gap: 20px;
+            padding: 10px 0;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .top-offers .row::-webkit-scrollbar {
+            display: none;
+        }
+
+        .top-offers .col {
+            flex: 0 0 auto;
+            width: 240px;
+        }
+
+        @media (max-width: 768px) {
+            .product-card {
+                width: 180px;
+            }
+
+            .product-card img {
+                height: 140px;
+            }
+
+            .top-offers .col {
+                width: 180px;
+            }
+        }
+
+        /* Add/modify these styles in the style section */
+        .navbar-nav .nav-link {
+            color: #000000 !important;
+            font-weight: 500;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #007bff !important;
+        }
+
+        .dropdown-menu {
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .dropdown-item {
+            color: #000000 !important;
+            font-weight: 500;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+            color: #007bff !important;
+        }
+
+        .nav-item .badge {
+            font-size: 0.7rem;
+            padding: 0.35em 0.65em;
+        }
+
+        /* Add these styles in the style section */
+        .cart-modal {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 220px;
+            height: 200px;
+            margin-top: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            background: white;
+            z-index: 1000;
+            display: none;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .cart-modal.show {
+            display: block;
+        }
+
+        .cart-modal::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            right: 20px;
+            width: 16px;
+            height: 16px;
+            background: white;
+            transform: rotate(45deg);
+            box-shadow: -2px -2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .cart-modal .modal-content {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: none;
+            background: none;
+        }
+
+        .cart-modal .modal-body {
+            padding: 0;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .cart-modal .modal-footer {
+            padding: 0;
+            border: none;
+        }
+
+        .cart-modal .btn-primary {
+            width: 100%;
+            padding: 8px 16px;
+            border-radius: 20px;
+        }
+
+        /* Add these styles in the style section */
+        .footer-recommendations {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 40px auto;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            max-width: 500px;
+        }
+
+        .footer-recommendations h3 {
+            color: #333;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .footer-recommendations .btn-warning {
+            background: linear-gradient(45deg, #ffc107, #ffb300);
+            border: none;
+            padding: 10px 30px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+        }
+
+        .footer-recommendations .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 193, 7, 0.4);
+        }
+
+        .footer-recommendations p {
+            margin-top: 15px;
+            color: #666;
+        }
+
+        .footer-recommendations a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .footer-recommendations a:hover {
+            color: #0056b3;
+        }
+
+        .footer {
+            background: #1a1a1a;
+            color: #fff;
+            padding: 60px 0 20px;
+        }
+
+        .footer-section {
+            margin-bottom: 30px;
+        }
+
+        .footer-section h5 {
+            color: #fff;
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-section h5::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 30px;
+            height: 2px;
+            background: #007bff;
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-section ul li a {
+            color: #ccc;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            display: inline-block;
+        }
+
+        .footer-section ul li a:hover {
+            color: #fff;
+            transform: translateX(5px);
+        }
+
+        .footer-contact {
+            margin-top: 20px;
+        }
+
+        .footer-contact p {
+            color: #ccc;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background: #007bff;
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+            margin-top: 40px;
+        }
+
+        .footer-bottom-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-bottom-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        .footer-bottom-item i {
+            color: #28a745;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    <!-- Navbar -->
+    <header>
+        <nav class="navbar navbar-expand-lg bg-light navbar-light m-0 sticky-top">
+            <div class="container">
+                <div class="logo">
+                    <img src="{% static 'images/icon.png' %}"
+                        alt="ShopIQ Logo" onclick="window.location.href='{% url 'Home' %}'" style="cursor: pointer;">
+                    <div class="logo-text">
+                        <span class="brand-name">ShopIQ</span>
+                        <span class="brand-tagline">SMART SHOPPING EVOLVED</span>
+                    </div>
+                </div>
+
+
+                <form class="d-flex mx-lg-4 flex-grow-1" action="{% url 'productlist' %}" method="GET" onsubmit="return validateSearch(event)">
+                    <div class="input-group">
+                        <input type="search" class="form-control" name="search" placeholder="Search for products and more" value="{{ request.GET.search }}" required minlength="1">
+                        <button class="btn btn-light" type="submit">
+                            <i class="fa-solid fa-magnifying-glass fa-beat" style="color: #74C0FC;"></i>
+                        </button>
+                    </div>
+                </form>
+                <ul class="navbar-nav ms-auto gap-lg-3">
+                    {% if user.is_authenticated %}
+                    <li class="nav-item dropdown active">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fa-solid fa-user" style="color: #000000;"></i> {{ user.username }}
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fas fa-user-circle me-2"></i>My Profile</a>
+                            </li>
+
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}"><i
+                                        class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item dropdown active ">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fa-solid fa-user" style="color: #000000;"></i>Account
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'login' %}"><i
+                                        class="fas fa-user-circle me-2"></i>Login</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="{% url 'register' %}"><i
+                                        class="fas fa-user-circle me-2"></i>Register</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+
+
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link position-relative" href="{% url 'cartlist' %}">
+                            <i class="fas fa-shopping-cart me-1"></i>Cart
+                        </a>
+                    </li>
+
+                    {% else %}
+                    <li class="nav-item position-relative">
+                        <a class="nav-link position-relative" href="#" id="cartButton">
+                            <i class="fas fa-shopping-cart me-1"></i>Cart
+                        </a>
+                        <div class="cart-modal" id="cartModal">
+                            <div class="modal-content">
+                                <div class="modal-body">
+                                    <i class="fas fa-shopping-cart fa-2x mb-3" style="color: #007bff;"></i>
+                                    <p class="mb-0" style="font-size: 18px; font-weight: 500; color: #000000;">Please login to access your cart</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    {% endif%}
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    {% block content %}
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <!-- Carousel -->
+    <div id="carouselExampleIndicators" class="carousel slide mt-5 px-5" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class='active'
+                aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" 
+                aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"
+                aria-label="Slide 3"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="3" 
+                aria-label="Slide 4"></button>    
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="{% static 'images/c2.webp' %}"
+                    class="d-block w-100" alt="Electronics">
+            </div>
+            <div class="carousel-item ">
+                <img src="{% static 'images/c4.jpg' %}" class="d-block w-100" alt="Home & Living">
+            </div>
+            <div class="carousel-item ">
+                <img src="{% static 'images/c3.jpg' %}" class="d-block w-100" alt="Home & Living">
+            </div>
+            <div class="carousel-item ">
+                <img src="{% static 'images/c5.jpg' %}" class="d-block w-100" alt="Home & Living">
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
+            data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
+            data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+    <!-- Top Offers Section -->
+    <div class="container mt-4">
+        <h2 class="mb-4" style="font-size: 24px; font-weight: 600; color: #333;">Top offers!</h2>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+            {% for product in top_offers %}
+            <div class="col">
+                <a href="{% url 'productdetail' product.id %}" class="text-decoration-none">
+                    <div class="card h-100 product-card">
+                        <div class="position-relative">
+                            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: contain; padding: 1rem;">
+                            
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title text-truncate mb-1">{{ product.name }}</h5>
+                            <div class="price-section">
+                                <span class="current-price">₹{{ product.price }}</span>
+                                <span class="original-price">₹{{ product.original_price|floatformat:0 }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>    
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Category Sections -->
+    <div class="container-fluid category-section">
+        {% for data in category_data %}
+        <div class="category-container">
+            <div class="category-header">
+                <h2 class="category-title">Best of {{ data.category.name }}</h2>
+                <a href="{% url 'productlist' %}?category={{ data.category_id }}" class="view-all-link">
+                    View All <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            <div class="product-row d-flex justify-content-around">
+                {% for product in data.products %}
+                <div class="product-card">
+                    
+                        <div class="position-relative">
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="card-img-top">
+                            
+                        </div>
+                        <div class="product-info">
+                            <h5 class="product-name">{{ product.name }}</h5>
+                            
+                        </div>
+                    
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+
+    <!-- Footer -->
+    <div class="container-fluid">
+        <div class="container-fluid">
+            <div class="card my-3 mx-auto">
+                <h3 class="card-title text-center">See personalized recommendations</h3>
+                <a href="{% url 'login' %}" class="btn btn-warning rounded-pill mx-auto btn-sm"
+                    style="width: 250px;">Sign in</a>
+                <p class="fs-6 text-center">New customer? <a href="{% url 'register' %}">Start here</a></p>
+            </div>
+        </div>
+
+        {% endblock %}
+
+
+        <div class="row bg-dark pt-5 ">
+            <div class="col-lg-2 col-md-3 col">
+                <div class="footer-section">
+                    <h5>About</h5>
+                    <ul>
+                        <li><a href="#">Contact us</a></li>
+                        <li><a href="#">About us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Stories</a></li>
+                        <li><a href="#">Press</a></li>
+                        <li><a href="#">Corporate Information</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-3 col">
+                <div class="footer-section">
+                    <h5>Group Companies</h5>
+                    <ul>
+                        <li><a href="#">Myntra</a></li>
+                        <li><a href="#">Cleartrip</a></li>
+                        <li><a href="#">Shopsy</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-3 col">
+                <div class="footer-section">
+                    <h5>Help</h5>
+                    <ul>
+                        <li><a href="#">Payments</a></li>
+                        <li><a href="#">Shipping</a></li>
+                        <li><a href="#">Cancellation & Returns</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+            </div>
+
+
+            <div class="col-lg-2 col-md-3 col">
+                <div class="footer-section">
+                    <h5>Consumer Policy</h5>
+                    <ul>
+                        <li><a href="#">Cancellation & Returns</a></li>
+                        <li><a href="#">Terms of Use</a></li>
+                        <li><a href="#">Security</a></li>
+                        <li><a href="#">Privacy</a></li>
+                        <li><a href="#">Sitemap</a></li>
+                        <li><a href="#">Grievance Redressal</a></li>
+                        <li><a href="#">EPR Compliance</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-3 col">
+                <div class="footer-section">
+                    <h5>Contact Us</h5>
+                    <div class="footer-contact">
+                        <p>3rd floor, Nikunjam Saras Building,<br>
+                            Landmark: Santamonia Study abroad,<br>
+                            Pattom, Thiruvananthapuram,<br>
+                            Kerala 695004</p>
+                        <div class="social-links">
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-youtube"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-3 col">
+                <div class="footer-section">
+                    <h5>Registered Office</h5>
+                    <div class="footer-contact">
+                        <p>No. 44, Hosur Road,<br>
+                            Electronics City,<br>
+                            Bengaluru Karnataka 560100</p>
+                        <p>Phone: <a href="tel:080-28520261">080-28520261</a><br>
+                            Fax: <a href="tel:080-28520362">080-28520362</a></p>
+                    </div>
+                </div>
+            </div>
+
+            <hr style="color: aliceblue;">
+
+            <div class="container d-flex ms-5">
+                <div class="col-lg-2 col-md-3 col">
+                    <div class="footer-bottom-item">
+                        <i class="fas fa-store"></i>
+                        <span>Become a Seller</span>
+                    </div>
+                </div>
+
+                <div class="col-lg-2 col-md-3 col">
+                    <div class="footer-bottom-item">
+                        <i class="fas fa-bullhorn"></i>
+                        <span>Advertise</span>
+                    </div>
+                </div>
+
+                <div class="col-lg-2 col-md-3 col">
+                    <div class="footer-bottom-item">
+                        <i class="fas fa-gift"></i>
+                        <span>Gift Cards</span>
+                    </div>
+                </div>
+
+                <div class="col-lg-2 col-md-3 col">
+                    <div class="footer-bottom-item">
+                        <i class="far fa-copyright"></i>
+                        <span>2007-2025 ShopIQ.com</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Replace the existing modal script with this -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const cartButton = document.getElementById('cartButton');
+            const cartModal = document.getElementById('cartModal');
+
+            if (cartButton && cartModal) {
+                cartButton.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    cartModal.classList.toggle('show');
+                });
+
+                // Close modal when clicking outside
+                document.addEventListener('click', function (e) {
+                    if (!cartModal.contains(e.target) && !cartButton.contains(e.target)) {
+                        cartModal.classList.remove('show');
+                    }
+                });
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}
+    <script>
+        function validateSearch(event) {
+            const searchInput = event.target.querySelector('input[name="search"]');
+            if (!searchInput.value.trim()) {
+                event.preventDefault();
+                return false;
+            }
+            return true;
+        }
+    </script>
+    {% endblock %}
+</body>
+
+</html>

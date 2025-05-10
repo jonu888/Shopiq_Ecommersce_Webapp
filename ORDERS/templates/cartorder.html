@@ -1,0 +1,413 @@
+{% extends 'home.html' %}
+{% load static %}
+
+{% block title %}Cart Checkout - ShopIQ{% endblock %}
+
+{% block extra_css %}
+<style>
+    .checkout-container {
+        background: #f1f3f6;
+        min-height: calc(100vh - 60px);
+        padding: 20px 0;
+        margin-top: 80px;
+    }
+
+    .checkout-content {
+        max-width: 1100px;
+        margin: 0 auto;
+        display: flex;
+        gap: 20px;
+        padding: 0 16px;
+    }
+
+    .checkout-left {
+        flex: 1;
+    }
+
+    .checkout-right {
+        width: 320px;
+    }
+
+    .checkout-box {
+        background: #fff;
+        border-radius: 2px;
+        box-shadow: 0 1px 2px 0 rgba(0,0,0,.1);
+        margin-bottom: 16px;
+    }
+
+    .checkout-header {
+        padding: 16px;
+        border-bottom: 1px solid #f0f0f0;
+        display: flex;
+        align-items: center;
+    }
+
+    .step-number {
+        width: 24px;
+        height: 24px;
+        border-radius: 2px;
+        background: #2874f0;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        margin-right: 12px;
+    }
+
+    .step-title {
+        font-size: 16px;
+        font-weight: 500;
+        color: #2874f0;
+    }
+
+    .checkout-body {
+        padding: 16px;
+    }
+
+    .product-info {
+        display: flex;
+        gap: 16px;
+        padding: 16px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .product-image {
+        width: 100px;
+        height: 100px;
+        padding: 10px;
+        border: 1px solid #f0f0f0;
+        border-radius: 4px;
+    }
+
+    .product-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    .product-details {
+        flex: 1;
+    }
+
+    .product-title {
+        font-size: 16px;
+        color: #212121;
+        margin-bottom: 8px;
+        font-weight: 500;
+    }
+
+    .product-seller {
+        font-size: 14px;
+        color: #878787;
+        margin-bottom: 8px;
+    }
+
+    .product-price {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .current-price {
+        font-size: 18px;
+        font-weight: 500;
+        color: #212121;
+    }
+
+    .original-price {
+        color: #878787;
+        text-decoration: line-through;
+        font-size: 14px;
+    }
+
+    .discount {
+        color: #388e3c;
+        font-size: 14px;
+    }
+
+    .quantity {
+        color: #212121;
+        font-size: 16px;
+        margin-left: 8px;
+    }
+
+    .payment-options {
+        padding: 16px;
+    }
+
+    .payment-method {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px;
+        border: 1px solid #f0f0f0;
+        border-radius: 4px;
+        margin-bottom: 12px;
+        cursor: pointer;
+    }
+
+    .payment-method:hover {
+        border-color: #2874f0;
+    }
+
+    .payment-method.selected {
+        border-color: #2874f0;
+        background: #f5faff;
+    }
+
+    .payment-method input[type="radio"] {
+        margin: 0;
+    }
+
+    .payment-method-label {
+        font-size: 14px;
+        color: #212121;
+        font-weight: 500;
+    }
+
+    .price-summary {
+        padding: 16px;
+    }
+
+    .price-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        font-size: 14px;
+        color: #212121;
+    }
+
+    .price-total {
+        padding-top: 12px;
+        margin-top: 12px;
+        border-top: 1px dashed #e0e0e0;
+        font-weight: 500;
+        font-size: 16px;
+    }
+
+    .savings {
+        padding: 12px 16px;
+        background: #f7fff7;
+        color: #388e3c;
+        font-size: 14px;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .order-button {
+        width: 100%;
+        padding: 16px;
+        background: #fb641b;
+        color: #fff;
+        border: none;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .order-button:hover {
+        background: #e85a19;
+    }
+
+    .order-button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+    }
+
+    .secure-info {
+        padding: 16px;
+        color: #878787;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .secure-info i {
+        color: #2874f0;
+    }
+
+    @media (max-width: 768px) {
+        .checkout-content {
+            flex-direction: column;
+        }
+        .checkout-right {
+            width: 100%;
+        }
+    }
+
+    .delivery-free {
+        color: #388e3c;
+    }
+
+    .step-completed {
+        color: #388e3c;
+        margin-left: auto;
+        font-size: 20px;
+    }
+
+    .empty-cart-message {
+        text-align: center;
+        padding: 24px;
+        color: #878787;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="checkout-container">
+    <div class="checkout-content">
+        <div class="checkout-left">
+            <!-- Login Section -->
+            <div class="checkout-box">
+                <div class="checkout-header">
+                    <div class="step-number">1</div>
+                    <div class="step-title">LOGIN</div>
+                    <div class="step-completed">✓</div>
+                </div>
+                <div class="checkout-body">
+                    <div class="user-name">{{ request.user.first_name }} {{ request.user.last_name }}</div>
+                    <div style="color: #878787;">{{ request.user.email }}</div>
+                </div>
+            </div>
+
+            <!-- Delivery Address -->
+            <div class="checkout-box">
+                <div class="checkout-header">
+                    <div class="step-number">2</div>
+                    <div class="step-title">DELIVERY ADDRESS</div>
+                    <div class="step-completed">✓</div>
+                </div>
+                <div class="checkout-body">
+                    <div class="address-info">
+                        <div class="address-details">
+                            <div class="user-name">{{ request.user.first_name }} {{ request.user.last_name }}</div>
+                        </div>
+                    </div>
+                    <div class="delivery-type">
+                        Delivery in 2 days, Tue | Free
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="checkout-box">
+                <div class="checkout-header">
+                    <div class="step-number">3</div>
+                    <div class="step-title">ORDER SUMMARY</div>
+                </div>
+                {% if cart %}
+                    {% for item in cart %}
+                    <div class="product-info">
+                        <div class="product-image">
+                            <img src="{{ item.cart_item.image.url }}" alt="{{ item.cart_item.name }}">
+                        </div>
+                        <div class="product-details">
+                            <div class="product-title">{{ item.cart_item.name }}</div>
+                            <div class="product-seller">Seller: ShopIQ</div>
+                            <div class="product-price">
+                                <span class="current-price">₹{{ item.cart_item.price|floatformat:2 }}</span>
+                                
+                                <span class="quantity">x {{ item.quantity }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="checkout-body">
+                        <p>No items in cart</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Payment Options -->
+            <div class="checkout-box">
+                <div class="checkout-header">
+                    <div class="step-number">4</div>
+                    <div class="step-title">PAYMENT OPTIONS</div>
+                </div>
+                <div class="payment-options">
+                    <form method="post" id="payment-form">
+                        {% csrf_token %}
+                        <div class="payment-method selected">
+                            <input type="radio" name="payment_method" value="cod" id="cod" checked>
+                            <label for="cod" class="payment-method-label">Cash on Delivery</label>
+                        </div>
+                        <div class="payment-method">
+                            <input type="radio" name="payment_method" value="upi" id="upi">
+                            <label for="upi" class="payment-method-label">UPI</label>
+                        </div>
+                        <div class="payment-method">
+                            <input type="radio" name="payment_method" value="card" id="card">
+                            <label for="card" class="payment-method-label">Credit/Debit Card</label>
+                        </div>
+                        <button type="submit" class="order-button" id="place-order">PLACE ORDER</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="checkout-right">
+            <div class="checkout-box">
+                <div class="checkout-header">
+                    <div class="step-title">PRICE DETAILS</div>
+                </div>
+                <div class="price-summary">
+                    <div class="price-row">
+                        <span>Price ({{ cart|length }} items)</span>
+                        <span id="item-price">₹{{ price_details.item_price }}</span>
+                    </div>
+                    <div class="price-row">
+                        <span>Delivery Charges</span>
+                        <span id="delivery-charges" class="{% if price_details.delivery_charges == 0 %}delivery-free{% endif %}">
+                            {% if price_details.delivery_charges == 0 %}FREE{% else %}₹{{ price_details.delivery_charges }}{% endif %}
+                        </span>
+                    </div>
+                    <div class="price-row">
+                        <span>Secured Packaging Fee</span>
+                        <span>₹{{ price_details.packaging_fee }}</span>
+                    </div>
+                    <div class="price-row price-total">
+                        <span>Total Amount</span>
+                        <span id="total-amount">₹{{ price_details.total_payable }}</span>
+                    </div>
+                </div>
+                {% if price_details.savings > 0 %}
+                <div class="savings">
+                    Your Total Savings on this order ₹{{ price_details.savings }}
+                </div>
+                {% endif %}
+            </div>
+            <div class="secure-info">
+                <i class="fas fa-shield-alt"></i>
+                Safe and Secure Payments. Easy returns. 100% Authentic products.
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const paymentForm = document.getElementById('payment-form');
+    const placeOrderButton = document.getElementById('place-order');
+    const paymentMethods = document.querySelectorAll('.payment-method');
+    
+    // Handle payment method selection
+    paymentMethods.forEach(method => {
+        method.addEventListener('click', function() {
+            paymentMethods.forEach(m => m.classList.remove('selected'));
+            this.classList.add('selected');
+            const radio = this.querySelector('input[type="radio"]');
+            radio.checked = true;
+        });
+    });
+
+    // Handle form submission
+    paymentForm.addEventListener('submit', function(e) {
+        placeOrderButton.disabled = true;
+        placeOrderButton.textContent = 'PROCESSING...';
+    });
+});
+</script>
+{% endblock %}

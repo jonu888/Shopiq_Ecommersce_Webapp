@@ -1,0 +1,171 @@
+{% extends 'home.html' %}
+{% load static %}
+
+{% block content %}
+<div class="payment-container">
+    <div class="payment-content">
+        <div class="payment-header">
+            <h1>Payment</h1>
+            <div class="payment-summary">
+                <p>Order Total: ₹{{ total_amount|floatformat:0.2 }}</p>
+            </div>
+        </div>
+
+        <div class="payment-form">
+            <form action="" method="post">
+                {% csrf_token %}
+                <button id="rzp-button1" class="payment-button">
+                    <i class="fas fa-credit-card"></i> Pay Now
+                </button>
+            </form>
+        </div>
+
+        <div class="payment-info">
+            <div class="secure-payment">
+                <i class="fas fa-shield-alt"></i>
+                <span>Secure Payment</span>
+            </div>
+            <div class="payment-methods">
+                <img src="{% static 'images/visa.png' %}" alt="Visa">
+                <img src="{% static 'images/mastercard.png' %}" alt="Mastercard">
+                <img src="{% static 'images/rupay.png' %}" alt="RuPay">
+                <img src="{% static 'images/upi.png' %}" alt="UPI">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+var options = {
+    "key": "{{razor_key_id}}",
+    "amount": "{{total_amount}}",
+    "currency": "INR",
+    "name": "{{summary.user.first_name}} {{summary.user.last_name}}",
+    "description": "Test Transaction",
+    "image": "https://example.com/your_logo",
+    "order_id": "{{order_id}}",
+    "callback_url": "{% url 'success' %}",
+    "prefill": {
+        "name": "{{summary.user.first_name}} {{summary.user.last_name}}",
+        "email": "{{summary.user.email}}",
+        "contact": "{{9072296337}}"
+    },
+    "notes": {
+        "address": "Razorpay Corporate Office"
+    },
+    "theme": {
+        "color": "#3399cc"
+    }
+};
+var rzp1 = new Razorpay(options);
+document.getElementById('rzp-button1').onclick = function(e){
+    rzp1.open();
+    e.preventDefault();
+}
+</script>
+
+<style>
+.payment-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.payment-content {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 2rem;
+}
+
+.payment-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.payment-header h1 {
+    color: #333;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.payment-summary {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.payment-summary p {
+    font-size: 1.2rem;
+    color: #333;
+    margin: 0;
+}
+
+.payment-form {
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.payment-button {
+    background: #3399cc;
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.payment-button:hover {
+    background: #2878a9;
+}
+
+.payment-info {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.secure-payment {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.payment-methods {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.payment-methods img {
+    height: 30px;
+    object-fit: contain;
+}
+
+@media (max-width: 768px) {
+    .payment-container {
+        margin: 1rem auto;
+    }
+    
+    .payment-content {
+        padding: 1rem;
+    }
+    
+    .payment-header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .payment-button {
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+    }
+}
+</style>
+{% endblock %}

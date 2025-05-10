@@ -1,0 +1,865 @@
+{% extends 'home.html' %}
+{% load static %}
+
+{% block title %}My Profile - ShopIQ{% endblock %}
+
+{% block body_attrs %}
+data-user-authenticated="{% if user.is_authenticated %}true{% else %}false{% endif %}"
+data-login-url="{% url 'login' %}"
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-container {
+        background: #f1f3f6;
+        min-height: calc(100vh - 60px);
+        padding: 16px 0;
+        margin-top: 0;
+    }
+
+    .profile-content {
+        max-width: 1100px;
+        margin: 0 auto;
+        display: flex;
+        gap: 16px;
+        padding: 0 16px;
+    }
+
+    .profile-left {
+        width: 280px;
+    }
+
+    .profile-right {
+        flex: 1;
+        background: #fff;
+        border-radius: 2px;
+        box-shadow: 0 1px 2px 0 rgba(0,0,0,.1);
+    }
+
+    .profile-header {
+        padding: 16px 24px;
+        border-bottom: 1px solid #f0f0f0;
+        display: flex;
+        align-items: center;
+    }
+
+    .profile-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: #2874f0;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        margin-right: 16px;
+    }
+
+    .profile-name {
+        font-size: 18px;
+        font-weight: 500;
+        color: #212121;
+    }
+
+    .profile-email {
+        color: #878787;
+        font-size: 14px;
+    }
+
+    .menu-box {
+        background: #fff;
+        border-radius: 2px;
+        box-shadow: 0 1px 2px 0 rgba(0,0,0,.1);
+    }
+
+    .menu-item {
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: #212121;
+        text-decoration: none;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .menu-item.active {
+        color: #2874f0;
+        background: #f5faff;
+    }
+
+    .menu-item i {
+        font-size: 18px;
+        width: 24px;
+    }
+
+    .profile-form {
+        padding: 24px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        display: block;
+        color: #212121;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #e0e0e0;
+        border-radius: 2px;
+        font-size: 14px;
+    }
+
+    .form-control:focus {
+        border-color: #2874f0;
+        outline: none;
+    }
+
+    .gender-options {
+        display: flex;
+        gap: 20px;
+    }
+
+    .gender-option {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .save-button {
+        background: #2874f0;
+        color: #fff;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 2px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    .save-button:hover {
+        background: #1c5bba;
+    }
+
+    .edit-link {
+        color: #2874f0;
+        font-size: 14px;
+        text-decoration: none;
+        margin-left: 8px;
+    }
+
+    .address-section {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .section-title {
+        font-size: 16px;
+        font-weight: 500;
+        color: #212121;
+        margin-bottom: 16px;
+    }
+
+    .address-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    @media (max-width: 768px) {
+        .address-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .required-field::after {
+        content: "*";
+        color: #ff0000;
+        margin-left: 4px;
+    }
+
+    .breadcrumb-container {
+        background-color: #fff;
+        padding: 8px 0;
+        margin-top: 56px;
+        border-bottom: 1px solid #eaeaea;
+    }
+
+    .breadcrumb {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 16px;
+        list-style: none;
+        display: flex;
+        align-items: center;
+        font-size: 12px;
+        color: #878787;
+    }
+
+    .breadcrumb-item {
+        display: flex;
+        align-items: center;
+    }
+
+    .breadcrumb-item a {
+        color: #878787;
+        text-decoration: none;
+    }
+
+    .breadcrumb-item a:hover {
+        color: #2874f0;
+    }
+
+    .breadcrumb-separator {
+        margin: 0 8px;
+        color: #878787;
+        font-size: 10px;
+    }
+
+    .breadcrumb-item.active {
+        color: #212121;
+    }
+
+    /* Add these new styles for wishlist */
+    .wishlist-container {
+        background: #fff;
+        border-radius: 2px;
+        box-shadow: 0 1px 2px 0 rgba(0,0,0,.1);
+        padding: 20px;
+    }
+
+    .wishlist-header {
+        font-size: 16px;
+        font-weight: 500;
+        color: #212121;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .wishlist-item {
+        display: flex;
+        padding: 16px;
+        border-bottom: 1px solid #f0f0f0;
+        position: relative;
+    }
+
+    .wishlist-image {
+        width: 112px;
+        height: 112px;
+        margin-right: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .wishlist-image img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    .wishlist-details {
+        flex: 1;
+    }
+
+    .wishlist-title {
+        font-size: 14px;
+        color: #212121;
+        margin-bottom: 8px;
+        text-decoration: none;
+    }
+
+    .wishlist-title:hover {
+        color: #2874f0;
+    }
+
+    .wishlist-price {
+        font-size: 16px;
+        font-weight: 500;
+        color: #212121;
+        margin-bottom: 8px;
+    }
+
+    .original-price {
+        text-decoration: line-through;
+        color: #878787;
+        margin-right: 8px;
+        font-size: 14px;
+    }
+
+    .discount {
+        color: #388e3c;
+        font-size: 14px;
+    }
+
+    .availability {
+        font-size: 14px;
+        margin-top: 8px;
+    }
+
+    .currently-unavailable {
+        color: #ff6161;
+    }
+
+    .wishlist-actions {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+    }
+
+    .move-to-cart-btn {
+        background: #2874f0;
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 2px;
+        font-size: 13px;
+        cursor: pointer;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .move-to-cart-btn:hover {
+        background: #1c5bba;
+        color: #fff;
+        text-decoration: none;
+    }
+
+    .remove-button {
+        background: none;
+        border: none;
+        color: #878787;
+        cursor: pointer;
+        padding: 8px;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        transition: color 0.3s ease;
+    }
+
+    .remove-button:hover {
+        color: #ff6161;
+    }
+
+    .assured-badge {
+        height: 16px;
+        margin-left: 8px;
+        vertical-align: middle;
+    }
+
+    .empty-wishlist {
+        text-align: center;
+        padding: 40px 20px;
+        color: #878787;
+    }
+
+    .empty-wishlist i {
+        font-size: 48px;
+        margin-bottom: 16px;
+        color: #c2c2c2;
+    }
+
+    .confirmation-modal {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 20px;
+        border-radius: 4px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        z-index: 1000;
+        text-align: center;
+    }
+
+    .modal-buttons {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+    }
+
+    .modal-button {
+        padding: 8px 24px;
+        border-radius: 2px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .cancel-button {
+        background: #fff;
+        color: #2874f0;
+        border: 1px solid #2874f0;
+    }
+
+    .remove-confirm-button {
+        background: #ff6161;
+        color: #fff;
+        border: none;
+    }
+
+    .overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 999;
+    }
+
+    /* Update filter-section margin if you have it */
+    .filter-section {
+        margin-top: 0; /* If you have this class */
+    }
+
+    /* Notification styles */
+    .notification {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        padding: 12px 24px;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        border-radius: 4px;
+        display: none;
+        align-items: center;
+        gap: 8px;
+        z-index: 1001;
+        animation: slideIn 0.3s ease-out;
+        font-size: 14px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    .notification.success {
+        background: rgba(56, 142, 60, 0.9);
+    }
+
+    .notification.error {
+        background: rgba(211, 47, 47, 0.9);
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    /* Add loading animation styles */
+    @keyframes loading {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
+
+    .loading {
+        animation: loading 1s infinite;
+        pointer-events: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{% csrf_token %}
+
+<div class="breadcrumb-container">
+    <ul class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'Home' %}">Home</a>
+        </li>
+        <li class="breadcrumb-separator">›</li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'profile' %}">My Account</a>
+        </li>
+        <li class="breadcrumb-separator">›</li>
+        <li class="breadcrumb-item">
+            {% if show_wishlist %}
+                My Wishlist
+            {% else %}
+                Profile Information
+            {% endif %}
+        </li>
+    </ul>
+</div>
+
+<div class="profile-container">
+    <div class="profile-content">
+        <!-- Left Menu -->
+        <div class="profile-left">
+            <div class="menu-box">
+                <a href="{% url 'profile' %}" class="menu-item {% if not show_wishlist %}active{% endif %}">
+                    <i class="fas fa-user"></i>
+                    Profile Information
+                </a>
+                <a href="{% url 'orders' %}" class="menu-item">
+                    <i class="fas fa-box"></i>
+                    MY ORDERS
+                </a>
+                <a href="{% url 'profile' %}?show_wishlist=true" class="menu-item {% if show_wishlist %}active{% endif %}">
+                    <i class="fas fa-heart"></i>
+                    My Wishlist ({{ wishlist_count }})
+                </a>
+                <a href="{% url 'review_list' %}" class="menu-item">
+                    <i class="fas fa-star"></i>
+                    My Reviews
+                </a>
+                <a href="{% url 'logout' %}" class="menu-item">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+        </div>
+
+        <!-- Right Content -->
+        <div class="profile-right">
+            {% if show_wishlist %}
+                <div class="wishlist-container">
+                    <div class="wishlist-header">
+                        My Wishlist ({{ wishlist_items|length }})
+                    </div>
+                    {% if wishlist_items %}
+                        {% for item in wishlist_items %}
+                        <div class="wishlist-item" data-wishlist-id="{{ item.id }}" data-product-id="{{ item.product.id }}">
+                            <div class="wishlist-image">
+                                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                            </div>
+                            <div class="wishlist-details">
+                                <a href="{% url 'productdetail' item.product.id %}" class="wishlist-title">
+                                    {{ item.product.name }}
+                                    {% if item.product.is_assured %}
+                                        <img src="{% static 'images/assured.png' %}" alt="Assured" class="assured-badge">
+                                    {% endif %}
+                                </a>
+                                <div class="wishlist-price">
+                                    <span class="current-price">₹{{ item.product.price }}</span>
+                                    {% if item.product.original_price %}
+                                        <span class="original-price">₹{{ item.product.original_price }}</span>
+                                        <span class="discount">{{ item.product.discount }}% off</span>
+                                    {% endif %}
+                                </div>
+                                {% if item.product.stock > 0 %}
+                                    <div class="availability">In Stock({{ item.product.stock }} available)</div>
+                                {% else %}
+                                    <div class="availability currently-unavailable">Currently unavailable</div>
+                                {% endif %}
+                            </div>
+                            <div class="wishlist-actions">
+                                <button class="remove-button" onclick="showRemoveConfirmation('{{ item.id }}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-wishlist">
+                            <i class="far fa-heart"></i>
+                            <p>Your wishlist is empty!</p>
+                            <p>Add items that you like to your wishlist. Review them anytime and easily move them to the bag.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            {% else %}
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        {{ user.first_name|first|upper }}
+                    </div>
+                    <div>
+                        <div class="profile-name">{{ user.first_name }} {{ user.last_name }}</div>
+                        <div class="profile-email">{{ user.email }}</div>
+                    </div>
+                </div>
+
+                <form class="profile-form" method="post">
+                    {% csrf_token %}
+                    <!-- Personal Information -->
+                    <div class="section-title">Personal Information</div>
+                    <div class="form-group">
+                        <label class="form-label required-field">First Name</label>
+                        <input type="text" class="form-control" name="first_name" value="{{ user.first_name }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label required-field">Last Name</label>
+                        <input type="text" class="form-control" name="last_name" value="{{ user.last_name }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Your Gender</label>
+                        <div class="gender-options">
+                            <div class="gender-option">
+                                <input type="radio" name="gender" value="Male" id="male" {% if profile.gender == 'Male' %}checked{% endif %}>
+                                <label for="male">Male</label>
+                            </div>
+                            <div class="gender-option">
+                                <input type="radio" name="gender" value="Female" id="female" {% if profile.gender == 'Female' %}checked{% endif %}>
+                                <label for="female">Female</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label required-field">Email Address</label>
+                        <input type="email" class="form-control" name="email" value="{{ user.email }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label required-field">Phone Number</label>
+                        <input type="tel" class="form-control" name="phone" value="{{ profile.phone }}" required>
+                    </div>
+
+                    <!-- Address Information -->
+                    <div class="address-section">
+                        <div class="section-title">Address Information</div>
+                        <div class="address-grid">
+                            <div class="form-group">
+                                <label class="form-label required-field">Address Line 1</label>
+                                <input type="text" class="form-control" name="address_line1" value="{{ profile.address_line1 }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Address Line 2</label>
+                                <input type="text" class="form-control" name="address_line2" value="{{ profile.address_line2 }}">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label required-field">City</label>
+                                <input type="text" class="form-control" name="city" value="{{ profile.city }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label required-field">State</label>
+                                <input type="text" class="form-control" name="state" value="{{ profile.state }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label required-field">Pincode</label>
+                                <input type="text" class="form-control" name="pincode" value="{{ profile.pincode }}" required pattern="[0-9]{6}" title="Please enter a valid 6-digit pincode">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="save-button">SAVE</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div class="overlay" id="overlay"></div>
+<div class="confirmation-modal" id="confirmationModal">
+    <p>Are you sure you want to remove this product?</p>
+    <div class="modal-buttons">
+        <button class="modal-button cancel-button" onclick="hideRemoveConfirmation()">CANCEL</button>
+        <button class="modal-button remove-confirm-button" onclick="removeFromWishlist()">YES, REMOVE</button>
+    </div>
+</div>
+
+<!-- Add this right before the closing </div> of profile-container -->
+<div id="notification" class="notification"></div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let itemToRemove = null;
+
+function showRemoveConfirmation(itemId) {
+    itemToRemove = itemId;
+    document.getElementById('overlay').style.display = 'block';
+    document.getElementById('confirmationModal').style.display = 'block';
+}
+
+function hideRemoveConfirmation() {
+    document.getElementById('overlay').style.display = 'none';
+    document.getElementById('confirmationModal').style.display = 'none';
+    itemToRemove = null;
+}
+
+function setLoadingState(element, loading) {
+    if (!element) return;
+    
+    if (loading) {
+        element.classList.add('loading');
+        element.style.pointerEvents = 'none';
+        if (element.tagName === 'BUTTON') {
+            element.disabled = true;
+        }
+    } else {
+        element.classList.remove('loading');
+        element.style.pointerEvents = 'auto';
+        if (element.tagName === 'BUTTON') {
+            element.disabled = false;
+        }
+    }
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function removeFromWishlist() {
+    if (!itemToRemove) return;
+    
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const wishlistItem = document.querySelector(`[data-wishlist-id="${itemToRemove}"]`);
+    
+    if (!wishlistItem) return;
+    
+    // Add loading state
+    setLoadingState(wishlistItem, true);
+    
+    fetch(`/remove-from-wishlist/${itemToRemove}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrfToken,
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            // Faster animation
+            wishlistItem.style.transition = 'all 0.15s ease-out';
+            wishlistItem.style.opacity = '0';
+            wishlistItem.style.transform = 'translateX(-20px)';
+            
+            setTimeout(() => {
+                wishlistItem.remove();
+                
+                // Update wishlist count in the menu
+                const wishlistMenuItem = document.querySelector('.menu-item[href*="show_wishlist"]');
+                if (wishlistMenuItem) {
+                    wishlistMenuItem.innerHTML = `<i class="fas fa-heart"></i>My Wishlist (${data.wishlist_count})`;
+                }
+                
+                // Update wishlist header count
+                const wishlistHeader = document.querySelector('.wishlist-header');
+                if (wishlistHeader) {
+                    wishlistHeader.textContent = `My Wishlist (${data.wishlist_count})`;
+                }
+                
+                // Show success notification
+                showNotification(data.message || 'Item removed from wishlist', true);
+                
+                // If no items left, show empty wishlist message
+                if (data.wishlist_count === 0) {
+                    const wishlistContainer = document.querySelector('.wishlist-container');
+                    if (wishlistContainer) {
+                        const emptyWishlist = `
+                            <div class="empty-wishlist">
+                                <i class="far fa-heart"></i>
+                                <p>Your wishlist is empty!</p>
+                                <p>Add items that you like to your wishlist. Review them anytime and easily move them to the bag.</p>
+                            </div>
+                        `;
+                        wishlistContainer.innerHTML = `
+                            <div class="wishlist-header">My Wishlist (0)</div>
+                            ${emptyWishlist}
+                        `;
+                    }
+                }
+            }, 150); // Reduced from 300ms to 150ms
+        } else {
+            showNotification('Error removing item from wishlist', false);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Something went wrong. Please try again.', false);
+    })
+    .finally(() => {
+        hideRemoveConfirmation();
+        setLoadingState(wishlistItem, false);
+    });
+}
+
+function toggleWishlist(productId) {
+    const isAuthenticated = document.body.dataset.userAuthenticated === 'true';
+    
+    if (!isAuthenticated) {
+        window.location.href = document.body.dataset.loginUrl;
+        return;
+    }
+
+    const wishlistIcon = document.querySelector(`.wishlist-icon[data-product-id="${productId}"]`);
+    if (!wishlistIcon) {
+        console.error('Wishlist icon not found');
+        return;
+    }
+    
+    const isInWishlist = wishlistIcon.classList.contains('active');
+    setLoadingState(wishlistIcon.parentElement, true);
+    
+    fetch(`/user_application/${isInWishlist ? 'remove-from-wishlist' : 'add-to-wishlist'}/${productId}/`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                wishlistIcon.classList.toggle('active');
+                showNotification(
+                    isInWishlist ? 'Removed from your Wishlist' : 'Added to your Wishlist',
+                    true
+                );
+                const wishlistMenuItem = document.querySelector('.menu-item[href*="show_wishlist"]');
+                if (wishlistMenuItem) {
+                    const currentCount = parseInt(wishlistMenuItem.textContent.match(/\d+/) || 0);
+                    const newCount = isInWishlist ? currentCount - 1 : currentCount + 1;
+                    wishlistMenuItem.innerHTML = `<i class="fas fa-heart"></i>My Wishlist (${newCount})`;
+                }
+            } else if (data.error === 'already_exists') {
+                showNotification('Item is already in your wishlist', false);
+            } else {
+                throw new Error(data.error || 'Failed to update wishlist');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Something went wrong. Please try again.', false);
+        })
+        .finally(() => {
+            setLoadingState(wishlistIcon.parentElement, false);
+        });
+}
+
+function showNotification(message, isSuccess) {
+    const notification = document.getElementById('notification');
+    notification.textContent = message;
+    notification.className = `notification ${isSuccess ? 'success' : 'error'}`;
+    notification.style.display = 'flex';
+    setTimeout(() => {
+        notification.style.display = 'none';
+    }, 3000);
+}
+</script>
+{% endblock %}

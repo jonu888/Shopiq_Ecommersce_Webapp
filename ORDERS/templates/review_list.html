@@ -1,0 +1,497 @@
+{% extends 'home.html' %}
+{% load static %}
+
+{% block content %}
+{% csrf_token %}
+<div class="reviews-container">
+    <div class="reviews-header">
+        <div class="back-button">
+            <a href="{% url 'profile' %}" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Back to Profile
+            </a>
+        </div>
+        <h1>My Reviews</h1>
+    </div>
+
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if reviews %}
+    <div class="reviews-list">
+        {% for review in reviews %}
+        <div class="review-item" data-review-id="{{ review.id }}">
+            <div class="product-info">
+                <img src="{{ review.product.image.url }}" alt="{{ review.product.name }}">
+                <div class="product-details">
+                    <h3>{{ review.product.name }}</h3>
+                    <p class="order-date">Ordered on: {{ review.order.order_id.created_at|date:"F j, Y" }}</p>
+                </div>
+            </div>
+            <div class="review-content">
+                <div class="rating">
+                    <span class="rating-label">Rating:</span>
+                    <div class="stars">
+                        {% for i in "12345" %}
+                        <i class="fas fa-star {% if forloop.counter <= review.rating %}filled{% endif %}"></i>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="comment">
+                    <p>{{ review.comment }}</p>
+                </div>
+                <div class="review-date">
+                    <small>Reviewed on: {{ review.posted_date|date:"F j, Y" }}</small>
+                </div>
+            </div>
+            <div class="review-actions">
+                <a href="{% url 'edit_review' review.id %}" class="edit-btn">
+                    <i class="fas fa-edit"></i> Edit
+                </a>
+                <button type="button" class="delete-btn" onclick="showDeleteConfirmation('{{ review.id }}')">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="no-reviews">
+        <i class="far fa-comment-dots"></i>
+        <p>You haven't written any reviews yet.</p>
+        <p>Share your experience by reviewing your purchased products!</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="overlay" id="overlay"></div>
+<div class="confirmation-modal" id="confirmationModal">
+    <p>Are you sure you want to delete this review?</p>
+    <div class="modal-buttons">
+        <button type="button" class="modal-button cancel-button" onclick="hideDeleteConfirmation()">Cancel</button>
+        <button type="button" class="modal-button delete-confirm-button" onclick="deleteReview()">Delete</button>
+    </div>
+</div>
+
+<style>
+.reviews-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    margin-top: 100px;
+}
+
+.reviews-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.back-button {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.back-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: #f8f9fa;
+    color: #333;
+    text-decoration: none;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+    background: #e9ecef;
+}
+
+.back-btn i {
+    font-size: 0.9rem;
+}
+
+.reviews-header h1 {
+    color: #333;
+    font-size: 2rem;
+}
+
+.messages {
+    margin-bottom: 1.5rem;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    animation: slideIn 0.3s ease-out;
+}
+
+.alert-success {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+}
+
+.alert-error {
+    background: #ffebee;
+    color: #c62828;
+    border: 1px solid #ffcdd2;
+}
+
+.review-item {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.product-info {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.product-info img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.product-details h3 {
+    margin: 0;
+    color: #333;
+    font-size: 1.1rem;
+}
+
+.order-date {
+    color: #666;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+.review-content {
+    margin-bottom: 1rem;
+}
+
+.rating {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.rating-label {
+    color: #666;
+}
+
+.stars {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.stars i {
+    color: #ddd;
+}
+
+.stars i.filled {
+    color: #ffc107;
+}
+
+.comment {
+    color: #333;
+    line-height: 1.5;
+}
+
+.review-date {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.review-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+.edit-btn, .delete-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.edit-btn {
+    background: #f8f9fa;
+    color: #333;
+    text-decoration: none;
+    border: 1px solid #ddd;
+}
+
+.delete-btn {
+    background: none;
+    color: #dc3545;
+    border: 1px solid #dc3545;
+}
+
+.edit-btn:hover {
+    background: #e9ecef;
+}
+
+.delete-btn:hover {
+    background: #dc3545;
+    color: white;
+}
+
+.no-reviews {
+    text-align: center;
+    padding: 3rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.no-reviews i {
+    font-size: 3rem;
+    color: #ddd;
+    margin-bottom: 1rem;
+}
+
+.no-reviews p {
+    color: #666;
+    margin-bottom: 0.5rem;
+}
+
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+}
+
+.confirmation-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    z-index: 1000;
+    text-align: center;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+.modal-button {
+    padding: 0.5rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.cancel-button {
+    background: #f8f9fa;
+    color: #333;
+    border: 1px solid #ddd;
+}
+
+.delete-confirm-button {
+    background: #dc3545;
+    color: white;
+    border: none;
+}
+
+.cancel-button:hover {
+    background: #e9ecef;
+}
+
+.delete-confirm-button:hover {
+    background: #c82333;
+}
+
+@media (max-width: 768px) {
+    .reviews-container {
+        margin: 1rem auto;
+    }
+    
+    .back-button {
+        position: static;
+        transform: none;
+        margin-bottom: 1rem;
+    }
+    
+    .back-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .product-info {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .product-info img {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto;
+    }
+    
+    .review-actions {
+        flex-direction: column;
+    }
+    
+    .edit-btn, .delete-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+</style>
+
+<script>
+let reviewToDelete = null;
+
+function showDeleteConfirmation(reviewId) {
+    reviewToDelete = reviewId;
+    document.getElementById('overlay').style.display = 'block';
+    document.getElementById('confirmationModal').style.display = 'block';
+}
+
+function hideDeleteConfirmation() {
+    document.getElementById('overlay').style.display = 'none';
+    document.getElementById('confirmationModal').style.display = 'none';
+    reviewToDelete = null;
+}
+
+function deleteReview() {
+    if (!reviewToDelete) return;
+    
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const reviewItem = document.querySelector(`[data-review-id="${reviewToDelete}"]`);
+    
+    if (!reviewItem) return;
+    
+    fetch(`/ORDERS/delete_review/${reviewToDelete}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrfToken,
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            reviewItem.style.transition = 'all 0.15s ease-out';
+            reviewItem.style.opacity = '0';
+            reviewItem.style.transform = 'translateX(-20px)';
+            
+            setTimeout(() => {
+                reviewItem.remove();
+                
+                // Check if there are any reviews left
+                const remainingReviews = document.querySelectorAll('.review-item');
+                if (remainingReviews.length === 0) {
+                    const reviewsList = document.querySelector('.reviews-list');
+                    if (reviewsList) {
+                        reviewsList.innerHTML = `
+                            <div class="no-reviews">
+                                <i class="far fa-comment-dots"></i>
+                                <p>You haven't written any reviews yet.</p>
+                                <p>Share your experience by reviewing your purchased products!</p>
+                            </div>
+                        `;
+                    }
+                }
+                
+                // Show success notification
+                const notification = document.createElement('div');
+                notification.className = 'alert alert-success';
+                notification.textContent = data.message || 'Review deleted successfully';
+                const messagesContainer = document.querySelector('.messages');
+                if (!messagesContainer) {
+                    const newMessagesContainer = document.createElement('div');
+                    newMessagesContainer.className = 'messages';
+                    document.querySelector('.reviews-header').insertAdjacentElement('afterend', newMessagesContainer);
+                }
+                document.querySelector('.messages').appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
+            }, 150);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        const notification = document.createElement('div');
+        notification.className = 'alert alert-error';
+        notification.textContent = 'Error deleting review. Please try again.';
+        const messagesContainer = document.querySelector('.messages');
+        if (!messagesContainer) {
+            const newMessagesContainer = document.createElement('div');
+            newMessagesContainer.className = 'messages';
+            document.querySelector('.reviews-header').insertAdjacentElement('afterend', newMessagesContainer);
+        }
+        document.querySelector('.messages').appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    })
+    .finally(() => {
+        hideDeleteConfirmation();
+    });
+}
+
+// Auto-hide success messages after 3 seconds
+document.addEventListener('DOMContentLoaded', function() {
+    const successMessages = document.querySelectorAll('.alert-success');
+    successMessages.forEach(message => {
+        setTimeout(() => {
+            message.style.opacity = '0';
+            message.style.transform = 'translateY(-20px)';
+            setTimeout(() => message.remove(), 300);
+        }, 3000);
+    });
+});
+</script>
+{% endblock %} 

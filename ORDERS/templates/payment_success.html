@@ -1,0 +1,222 @@
+{% extends 'home.html' %}
+{% load static %}
+
+{% block content %}
+<div class="success-container">
+    <div class="success-content">
+        <div class="success-animation">
+            <div class="checkmark-circle">
+                <div class="checkmark"></div>
+            </div>
+        </div>
+        
+        <div class="success-message">
+            <h1>Payment Successful!</h1>
+            <p>Your order has been placed successfully.</p>
+            <div class="order-details">
+                <div class="detail-item">
+                    <span class="label">Order ID:</span>
+                    <span class="value">{{ order_id }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Amount Paid:</span>
+                    <span class="value">₹{{ total_amount|floatformat:2 }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Payment ID:</span>
+                    <span class="value">{{ payment_id }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="success-actions">
+            <a href="" class="view-orders-btn">
+                <i class="fas fa-list"></i> View Orders
+            </a>
+            <a href="{% url 'Home' %}" class="continue-shopping-btn">
+                <i class="fas fa-shopping-bag"></i> Continue Shopping
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+.success-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.success-content {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 2rem;
+    text-align: center;
+}
+
+.success-animation {
+    margin: 2rem 0;
+}
+
+.checkmark-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: #4CAF50;
+    margin: 0 auto;
+    position: relative;
+    animation: scaleIn 0.5s ease-out;
+}
+
+.checkmark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+    width: 30px;
+    height: 60px;
+    border-right: 4px solid white;
+    border-bottom: 4px solid white;
+    animation: checkmark 0.5s ease-out;
+}
+
+.success-message h1 {
+    color: #333;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.success-message p {
+    color: #666;
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+.order-details {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 4px;
+    margin: 2rem 0;
+    text-align: left;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #eee;
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.label {
+    color: #666;
+    font-weight: 500;
+}
+
+.value {
+    color: #333;
+    font-weight: 600;
+}
+
+.success-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.view-orders-btn, .continue-shopping-btn {
+    padding: 0.8rem 1.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.view-orders-btn {
+    background: #3399cc;
+    color: white;
+}
+
+.view-orders-btn:hover {
+    background: #2878a9;
+}
+
+.continue-shopping-btn {
+    background: #f8f9fa;
+    color: #333;
+    border: 1px solid #ddd;
+}
+
+.continue-shopping-btn:hover {
+    background: #e9ecef;
+}
+
+@keyframes scaleIn {
+    0% {
+        transform: scale(0);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes checkmark {
+    0% {
+        height: 0;
+        width: 0;
+        opacity: 0;
+    }
+    50% {
+        height: 0;
+        width: 30px;
+        opacity: 1;
+    }
+    100% {
+        height: 60px;
+        width: 30px;
+        opacity: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .success-container {
+        margin: 1rem auto;
+    }
+    
+    .success-content {
+        padding: 1rem;
+    }
+    
+    .success-message h1 {
+        font-size: 1.5rem;
+    }
+    
+    .success-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .view-orders-btn, .continue-shopping-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+</style>
+{% endblock %}

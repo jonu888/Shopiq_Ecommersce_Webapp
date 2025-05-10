@@ -1,0 +1,403 @@
+{% extends 'home.html' %}
+{% load static %}
+
+{% block title %}Shopping Cart - ShopIQ{% endblock %}
+
+{% block extra_css %}
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        overflow-x: hidden;
+    }
+
+    .main-content {
+        padding-top: 60px;
+        min-height: calc(100vh - 60px);
+        background-color: #f1f3f6;
+        width: 100%;
+        overflow-x: hidden;
+        box-sizing: border-box;
+    }
+
+    .cart-container {
+        max-width: 1200px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 16px;
+        display: flex;
+        gap: 16px;
+        box-sizing: border-box;
+    }
+
+    .cart-left {
+        flex: 1;
+        min-width: 0; /* Prevents flex item from overflowing */
+        background: #fff;
+        border-radius: 2px;
+        box-shadow: 0 1px 1px 0 rgba(0,0,0,.2);
+    }
+
+    .cart-right {
+        width: 380px;
+        min-width: 300px;
+        background: #fff;
+        border-radius: 2px;
+        box-shadow: 0 1px 1px 0 rgba(0,0,0,.2);
+        height: fit-content;
+    }
+
+    .cart-header {
+        padding: 16px 24px;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 16px;
+        font-weight: 500;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .cart-item {
+        padding: 24px;
+        border-bottom: 1px solid #f0f0f0;
+        display: flex;
+        gap: 24px;
+        flex-wrap: wrap;
+    }
+
+    .item-image {
+        width: 120px;
+        height: 120px;
+        object-fit: contain;
+    }
+
+    .item-details {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .item-title {
+        font-size: 16px;
+        margin-bottom: 8px;
+        color: #212121;
+    }
+
+    .item-seller {
+        color: #878787;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .price-container {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .current-price {
+        font-size: 18px;
+        font-weight: 500;
+    }
+
+    .original-price {
+        color: #878787;
+        text-decoration: line-through;
+        font-size: 14px;
+    }
+
+    .discount {
+        color: #388e3c;
+        font-size: 14px;
+    }
+
+    .quantity-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+
+    .qty-btn {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        border: 1px solid #c2c2c2;
+        background: #fff;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    .qty-input {
+        width: 45px;
+        height: 28px;
+        border: 1px solid #c2c2c2;
+        border-radius: 2px;
+        text-align: center;
+        font-size: 14px;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 16px;
+    }
+
+    .action-btn {
+        border: none;
+        background: none;
+        color: #2874f0;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        padding: 0;
+    }
+
+    .price-details {
+        padding: 16px 24px;
+    }
+
+    .price-header {
+        font-size: 16px;
+        font-weight: 500;
+        padding-bottom: 16px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .price-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 16px 0;
+        color: #212121;
+    }
+
+    .price-total {
+        padding: 16px 0;
+        border-top: 1px dashed #e0e0e0;
+        font-size: 18px;
+        font-weight: 500;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .savings {
+        padding: 16px 0;
+        font-size: 16px;
+        color: #388e3c;
+        border-top: 1px dashed #e0e0e0;
+    }
+
+    .place-order {
+        padding: 16px 24px;
+        background: #fb641b;
+        color: #fff;
+        font-size: 16px;
+        font-weight: 500;
+        width: 100%;
+        border: none;
+        cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+        .cart-container {
+            flex-direction: column;
+            padding: 8px;
+        }
+
+        .cart-right {
+            width: 100%;
+            min-width: auto;
+        }
+
+        .cart-item {
+            padding: 16px;
+            gap: 16px;
+        }
+
+        .item-image {
+            width: 100%;
+            max-width: 200px;
+            margin: 0 auto;
+        }
+
+        .item-details {
+            min-width: 100%;
+        }
+
+        .price-details {
+            padding: 12px 16px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="cart-container">
+        <!-- Left Section - Cart Items -->
+        <div class="cart-left">
+            <div class="cart-header">
+                <span>My Cart ({{ cart_items|length }} items)</span>
+                {% if subtotal < free_delivery_threshold %}
+                <span class="free-delivery-msg">Add items worth ₹{{ remaining_for_free_delivery }} for free delivery</span>
+                {% endif %}
+            </div>
+
+            {% for item in cart_items %}
+            <div class="cart-item" data-id="{{ item.id }}">
+                <a href="{% url 'productdetail' pk=item.cart_item.id %}" style="text-decoration: none;">
+                    <img src="{{ item.cart_item.image.url }}" alt="{{ item.cart_item.name }}" class="item-image">
+                </a>
+                <div class="item-details">
+                    <a href="{% url 'productdetail' pk=item.cart_item.id %}" style="text-decoration: none; color: inherit;">
+                        <h2 class="item-title">{{ item.cart_item.name }}</h2>
+                    </a>
+                    <p class="item-seller">Seller: ShopIQ Retail</p>
+                    <div class="price-container">
+                        <span class="current-price">₹{{ item.cart_item.price }}</span>
+                        <span class="original-price">₹{{ item.original_price|floatformat:0 }}</span>
+                        <span class="discount">10% off</span>
+                    </div>
+                    <div class="quantity-controls">
+                        <button class="qty-btn" onclick="updateQuantity('{{ item.id }}', 'decrement')">−</button>
+                        <input type="text" class="qty-input" value="{{ item.quantity }}" readonly>
+                        <button class="qty-btn" onclick="updateQuantity('{{ item.id }}', 'increment')">+</button>
+                    </div>
+                    <div class="action-buttons">
+                        <a href="{% url 'cart_delete' pk=item.id %}" style="text-decoration: none; color: inherit;">REMOVE</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+            {% if cart_items %}
+            <div style="padding: 16px 24px;">
+                
+                    <button class="place-order"><a href="{% url 'cartorder' request.user.id %}" style="text-decoration: none; color: inherit;">Place Order</a></button>
+                
+            </div>
+            {% else %}
+            <div style="padding: 24px; text-align: center;">
+                <h2 style="color: #212121; font-size: 18px; margin-bottom: 12px;">Your cart is empty!</h2>
+                <p style="color: #878787; font-size: 14px; margin-bottom: 16px;">Add items to your cart to proceed with checkout.</p>
+                <a href="{% url 'productlist' %}" style="display: inline-block; padding: 12px 24px; background: #2874f0; color: white; text-decoration: none; border-radius: 2px;">Continue Shopping</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Right Section - Price Details -->
+        <div class="cart-right">
+            <div class="price-details">
+                <div class="price-header">PRICE DETAILS</div>
+                <div class="price-row">
+                    <span>Price ({{ cart_items|length }} items)</span>
+                    <span class="subtotal-value">₹{{ subtotal }}</span>
+                </div>
+                <div class="price-row">
+                    <span>Delivery Charges</span>
+                    <span class="delivery-fee" {% if not delivery_fee %}style="color: #388e3c;"{% endif %}>
+                        {% if delivery_fee %}₹{{ delivery_fee }}{% else %}FREE{% endif %}
+                    </span>
+                </div>
+                <div class="price-row">
+                    <span>Secured Packaging Fee</span>
+                    <span>₹{{ secure_packaging }}</span>
+                </div>
+                <div class="price-total">
+                    <span>Total Amount</span>
+                    <span class="total-value">₹{{ total }}</span>
+                </div>
+                {% if cart_items %}
+                <div class="savings">
+                    You will save ₹{{ total_savings|floatformat:0 }} on this order
+                </div>
+                {% endif %}
+            </div>
+           
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function updateQuantity(itemId, action) {
+        const url = `/PRODUCTS/cart${action}/${itemId}/`;
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const cartItem = document.querySelector(`.cart-item[data-id="${itemId}"]`);
+                // Update quantity
+                cartItem.querySelector('.qty-input').value = data.quantity;
+                
+                // Update item subtotal
+                const priceElement = cartItem.querySelector('.current-price');
+                const price = parseFloat(priceElement.textContent.replace('₹', ''));
+                const subtotal = price * data.quantity;
+                
+                // Update original price and savings
+                const originalPrice = price * 1.1;
+                const savings = (originalPrice - price) * data.quantity;
+                
+                // Update total amount
+                const allSubtotals = document.querySelectorAll('.cart-item');
+                let newSubtotal = 0;
+                allSubtotals.forEach(item => {
+                    const itemPrice = parseFloat(item.querySelector('.current-price').textContent.replace('₹', ''));
+                    const itemQty = parseInt(item.querySelector('.qty-input').value);
+                    newSubtotal += itemPrice * itemQty;
+                });
+
+                // Update delivery fee
+                const deliveryFeeElement = document.querySelector('.delivery-fee');
+                const deliveryFee = newSubtotal < 500 ? 40 : 0;
+                if (deliveryFeeElement) {
+                    deliveryFeeElement.textContent = deliveryFee === 0 ? 'FREE' : `₹${deliveryFee}`;
+                    deliveryFeeElement.style.color = deliveryFee === 0 ? '#388e3c' : '#212121';
+                }
+
+                // Update secure packaging fee
+                const securePackagingFee = 59;
+
+                // Calculate and update total
+                const total = newSubtotal + deliveryFee + securePackagingFee;
+
+                // Update all price elements
+                document.querySelector('.subtotal-value').textContent = `₹${newSubtotal.toFixed(2)}`;
+                document.querySelector('.total-value').textContent = `₹${total.toFixed(2)}`;
+
+                // Calculate and update total savings
+                const totalSavings = (newSubtotal * 0.1).toFixed(2);
+                document.querySelector('.savings').textContent = `You will save ₹${totalSavings} on this order`;
+
+                // Show/hide free delivery message
+                const freeDeliveryMsg = document.querySelector('.free-delivery-msg');
+                if (freeDeliveryMsg) {
+                    freeDeliveryMsg.style.display = newSubtotal < 500 ? 'block' : 'none';
+                }
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    // Add form submission handling
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const button = this.querySelector('button[type="submit"]');
+            button.disabled = true;
+            button.textContent = 'Processing...';
+        });
+    });
+</script>
+{% endblock %}
